@@ -12,7 +12,7 @@ fi
 
 if [[ $action == "verify" ]]; then
 	for var in ${vars[@]}; do
-		value=$(eval "echo \${$var}")
+		value=$(printenv $var)
 		if [ -z $value ]; then
 			echo "$var is not set"
 			exit 1
