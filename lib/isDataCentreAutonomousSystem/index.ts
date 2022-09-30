@@ -21,6 +21,7 @@ const dataCentreAutonomousSystemList = new Set<string>([
 	"Microsoft Azure",
 	"Oracle Cloud",
 	"OVH SAS",
+	"ServerMania",
 	"Tencent cloud computing",
 	"Vivid Hosting",
 	"Web Hosted Group Ltd",
