@@ -1,0 +1,40 @@
+{
+  "name": "cloudflare-workers",
+  "version": "0.0.0",
+  "private": true,
+  "description": "☁️ A collection of edge workers",
+  "keywords": [
+    "☁️",
+    "cloudflare",
+    "edge",
+    "worker"
+  ],
+  "author": "omrilotan <hi@omrilotan.com> (https://omrilotan.com/)",
+  "license": "Unlicense",
+  "type": "module",
+  "workspaces": [
+    "services/*"
+  ],
+  "scripts": {
+    "prepare": "which wrangler || npm i wrangler --no-save",
+    "format": "prettier --write .",
+    "lint": "prettier --check .",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --forceExit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.16.0",
+    "@types/jest": "^29.1.1",
+    "@types/uuid": "^8.3.4",
+    "jest": "^29.1.2",
+    "jest-environment-miniflare": "^2.9.0",
+    "prettier": "^2.7.1",
+    "prettier-plugin-sh": "^0.12.8",
+    "prettier-plugin-toml": "^0.3.1",
+    "ts-jest": "^29.0.3",
+    "typescript": "^4.8.4",
+    "wrangler": "^2.1.9"
+  },
+  "dependencies": {
+    "country-code-lookup": "^0.0.20"
+  }
+}

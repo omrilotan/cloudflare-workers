@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "types": ["@cloudflare/workers-types", "@types/jest"],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "resolveJsonModule": true
+  },
+  "include": ["services", "lib", "mocks"],
+  "exclude": ["node_modules", "dist"]
+}

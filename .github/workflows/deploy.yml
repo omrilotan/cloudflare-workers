@@ -1,0 +1,49 @@
+name: Deploy
+on:
+  - push
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ${{ matrix.os }}
+    permissions:
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - 'ubuntu-latest'
+        node-version:
+          - '18'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm i
+      - run: npm run lint
+      - name: commit auto fixes
+        env:
+          USERNAME: ${{ github.actor }}
+          TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref }}
+        run: |
+          if [ "$(git diff --quiet && echo 0 || echo $?)" -gt 0 ]; then
+            git config --global user.email "${USERNAME}@users.noreply.github.com" --replace-all
+            git config --global user.name "$USERNAME" --replace-all
+            git commit -am "😎 Autofix"
+            git remote set-url origin https://$USERNAME:$TOKEN@github.com/$REPO.git
+            git push -u origin HEAD:${BRANCH}
+            exit 1
+          fi
+      - run: npm t
+      - name: Deploy
+        env:
+          HANDSHAKE_TOKEN: ${{ secrets.HANDSHAKE_TOKEN }}
+          VERIFIED_SENDGRID_EMAIL: ${{ secrets.VERIFIED_SENDGRID_EMAIL }}
+          SENDGRID_TOKEN: ${{ secrets.SENDGRID_TOKEN }}
+          LOGZIO_TOKEN: ${{ secrets.LOGZIO_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{  secrets.CLOUDFLARE_ACCOUNT_ID}}
+        run: npm run deploy --workspaces --if-present
