@@ -1,4 +1,5 @@
 export interface Env {
+	DISCORD_WEBHOOK: string;
 	HANDSHAKE_TOKEN: string;
 	LOGZIO_TOKEN: string;
 	SENDGRID_TOKEN: string;
@@ -6,6 +7,7 @@ export interface Env {
 }
 
 export const envVars: string[] = [
+	"DISCORD_WEBHOOK",
 	"HANDSHAKE_TOKEN",
 	"LOGZIO_TOKEN",
 	"SENDGRID_TOKEN",

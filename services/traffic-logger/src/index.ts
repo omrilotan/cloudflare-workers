@@ -1,5 +1,6 @@
 import isbot from "isbot";
 import { v4 as uuidv4 } from "uuid";
+import { discord } from "../../../lib/discord";
 import { log } from "../../../lib/log";
 import { continentCodeToName } from "../../../lib/continent";
 import { countryName } from "../../../lib/countryName";
@@ -10,6 +11,7 @@ import { cacheHit } from "./cacheHit";
 import type { CacheStatus } from "./cacheHit";
 
 export interface Env {
+	DISCORD_WEBHOOK: string;
 	LOGZIO_TOKEN: string;
 }
 
@@ -137,6 +139,12 @@ export default {
 						duration: Date.now() - start,
 					},
 					env.LOGZIO_TOKEN
+				)
+			);
+			ctx.waitUntil(
+				discord(
+					`Error fetching "${request.url}"\n\`\`\`\n${message}\n\`\`\``,
+					env.DISCORD_WEBHOOK
 				)
 			);
 			throw error;

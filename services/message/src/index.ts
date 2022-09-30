@@ -1,4 +1,5 @@
 import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries";
+import { discord } from "../../../lib/discord";
 import { log } from "../../../lib/log";
 import { envVars } from "./env";
 import type { Env } from "./env";
@@ -82,18 +83,24 @@ export default {
 							},
 						],
 					}),
-				}).catch((error) =>
-					log(
-						{
-							app: url.hostname,
-							level: "error",
-							message: error.message,
-							stack: error.stack,
-							status: error.status,
-						},
-						env.SENDGRID_TOKEN
-					)
-				)
+				}).catch(async (error) => {
+					await Promise.all([
+						log(
+							{
+								level: "error",
+								app: url.hostname,
+								message: error.message,
+								stack: error.stack,
+								status: error.status,
+							},
+							env.SENDGRID_TOKEN
+						),
+						discord(
+							`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
+							env.DISCORD_WEBHOOK
+						)
+					])
+				})
 			);
 
 			return new Response("Sent", {
@@ -104,13 +111,19 @@ export default {
 			ctx.waitUntil(
 				log(
 					{
-						app: url.hostname,
 						level: "error",
+						app: url.hostname,
 						message: error.message,
 						stack: error.stack,
 						status: error.status,
 					},
 					env.SENDGRID_TOKEN
+				)
+			);
+			ctx.waitUntil(
+				discord(
+					`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
+					env.DISCORD_WEBHOOK
 				)
 			);
 			return new Response(error?.message, {
