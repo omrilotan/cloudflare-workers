@@ -24,7 +24,7 @@ fi
 if [[ $action == "push" ]]; then
 	for var in ${vars[@]}; do
 		value=$(printenv $var)
-		echo "echo $value | wrangler secret put $var"
+		echo $value | wrangler secret put $var
 	done
 	exit 0
 fi
