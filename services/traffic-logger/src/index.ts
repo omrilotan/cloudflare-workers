@@ -4,7 +4,7 @@ import { discord } from "../../../lib/discord";
 import { log } from "../../../lib/log";
 import { continentCodeToName } from "../../../lib/continent";
 import { countryName } from "../../../lib/countryName";
-import { isDataCentreASN } from "../../../lib/isDataCentreASN";
+import { isDataCentreAutonomousSystem } from "../../../lib/isDataCentreAutonomousSystem";
 import { parseCHUA } from "../../../lib/parse-ch-ua";
 import { type } from "../../../lib/type";
 import { cacheHit } from "./cacheHit";
@@ -89,7 +89,7 @@ export default {
 			if (isbot(userAgent)) {
 				return mutableResponse;
 			}
-			if (isDataCentreASN(cf.asOrganization)) {
+			if (isDataCentreAutonomousSystem(cf.asOrganization)) {
 				return mutableResponse;
 			}
 			const contentType = type(originalResponse.headers.get("content-type"));

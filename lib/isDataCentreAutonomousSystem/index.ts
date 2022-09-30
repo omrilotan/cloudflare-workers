@@ -1,8 +1,9 @@
-const dataCentreASNList = new Set<string>([
+const dataCentreAutonomousSystemList = new Set<string>([
 	"Aixit GmbH",
 	"Alibaba",
-	"Amazon",
 	"Amazon.com",
+	"Amazon",
+	"DATACITY",
 	"Digital Ocean",
 	"DigitalOcean",
 	"Flyservers S.A.",
@@ -25,5 +26,5 @@ const dataCentreASNList = new Set<string>([
 	"Web Hosted Group Ltd",
 ]);
 
-export const isDataCentreASN = (asn: string): boolean =>
-	dataCentreASNList.has(asn);
+export const isDataCentreAutonomousSystem = (as: string): boolean =>
+	dataCentreAutonomousSystemList.has(as);
