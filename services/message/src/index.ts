@@ -98,8 +98,8 @@ export default {
 						discord(
 							`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
 							env.DISCORD_WEBHOOK
-						)
-					])
+						),
+					]);
 				})
 			);
 
