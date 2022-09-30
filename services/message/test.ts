@@ -57,7 +57,7 @@ describe("services/message", () => {
 				"username@domain.com"
 			);
 			expect(payload.from.email).toBe("authorised.with.sendgrid@domain.net");
-			expect(payload.subject).toBe("Receved email from www.website.com");
+			expect(payload.subject).toBe("Received email from www.website.com");
 			expect(payload.content[0].value).toBe(
 				"from: Shmuel\ncontact: 07873670381"
 			);
@@ -89,7 +89,7 @@ describe("services/message", () => {
 				"username@domain.com"
 			);
 			expect(payload.from.email).toBe("authorised.with.sendgrid@domain.net");
-			expect(payload.subject).toBe("Receved email");
+			expect(payload.subject).toBe("Received email");
 			expect(payload.content[0].value).toBe(
 				"from: Shmuel\ncontact: 07873670381"
 			);

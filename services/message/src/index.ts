@@ -83,7 +83,7 @@ export default {
 						from: { email: env.VERIFIED_SENDGRID_EMAIL },
 						subject:
 							rest.subject ||
-							["Receved email", fromSite(request)].filter(Boolean).join(" "),
+							["Received email", fromSite(request)].filter(Boolean).join(" "),
 						content: [
 							{
 								type: "text/plain",
