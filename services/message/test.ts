@@ -11,6 +11,7 @@ const env: Env = {
 	LOGZIO_TOKEN: "xmC8duHhUaqqYoBWbMgGq1g6jxUJwtPG",
 	SENDGRID_TOKEN: "451ECD88-AA68-401F-906C-D0E29D2A8D33",
 	VERIFIED_SENDGRID_EMAIL: "authorised.with.sendgrid@domain.net",
+	VERSION: "a3b445d",
 };
 const ctx = new MockExecutionContext();
 

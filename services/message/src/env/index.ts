@@ -4,6 +4,7 @@ export interface Env {
 	LOGZIO_TOKEN: string;
 	SENDGRID_TOKEN: string;
 	VERIFIED_SENDGRID_EMAIL: string;
+	VERSION: string;
 }
 
 export const envVars: string[] = [
@@ -12,4 +13,5 @@ export const envVars: string[] = [
 	"LOGZIO_TOKEN",
 	"SENDGRID_TOKEN",
 	"VERIFIED_SENDGRID_EMAIL",
+	"VERSION",
 ];

@@ -13,6 +13,7 @@ import type { CacheStatus } from "./cacheHit";
 export interface Env {
 	DISCORD_WEBHOOK: string;
 	LOGZIO_TOKEN: string;
+	VERSION: string;
 }
 
 export default {
@@ -70,6 +71,7 @@ export default {
 
 			// Add headers
 			[
+				["App-Version", env.VERSION],
 				[
 					"Server-Timing",
 					`CDN-Origin-Fetch; dur=${Date.now() - start}; desc="origin rtt"`,

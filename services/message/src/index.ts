@@ -19,10 +19,15 @@ export default {
 				throw new Error("Missing environment variables");
 			}
 
+			const versionHeaderEntry: [key: string, value: string] = [
+				"App-Version",
+				env.VERSION,
+			];
+
 			if (!/post/i.test(request.method)) {
 				return new Response(null, {
 					status: 200,
-					headers: new Headers(CORSHeaderEntries),
+					headers: new Headers([...CORSHeaderEntries, versionHeaderEntry]),
 				});
 			}
 
@@ -41,6 +46,7 @@ export default {
 					status: 401,
 					headers: new Headers([
 						...CORSHeaderEntries,
+						versionHeaderEntry,
 						["WWW-Authenticate", 'Basic realm="Include Brarer Token"'],
 					]),
 				});
@@ -49,7 +55,7 @@ export default {
 			if (!recipient) {
 				return new Response("No Recipient", {
 					status: 400,
-					headers: new Headers(CORSHeaderEntries),
+					headers: new Headers([...CORSHeaderEntries, versionHeaderEntry]),
 				});
 			}
 
@@ -124,7 +130,7 @@ export default {
 
 			return new Response("Sent", {
 				status: 200,
-				headers: new Headers(CORSHeaderEntries),
+				headers: new Headers([...CORSHeaderEntries, versionHeaderEntry]),
 			});
 		} catch (error: any) {
 			ctx.waitUntil(
