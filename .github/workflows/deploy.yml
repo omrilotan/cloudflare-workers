@@ -41,6 +41,7 @@ jobs:
       - run: npm t
       - name: Deploy
         env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           HANDSHAKE_TOKEN: ${{ secrets.HANDSHAKE_TOKEN }}
           VERIFIED_SENDGRID_EMAIL: ${{ secrets.VERIFIED_SENDGRID_EMAIL }}
           SENDGRID_TOKEN: ${{ secrets.SENDGRID_TOKEN }}
