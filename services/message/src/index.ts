@@ -53,6 +53,10 @@ export default {
 				});
 			}
 
+			const content = Object.entries(rest)
+				.map(([key, value]) => [key, value].join(": "))
+				.join("\n");
+
 			ctx.waitUntil(
 				send("https://api.sendgrid.com/v3/mail/send", {
 					method: "POST",
@@ -77,30 +81,45 @@ export default {
 						content: [
 							{
 								type: "text/plain",
-								value: Object.entries(rest)
-									.map(([key, value]) => [key, value].join(": "))
-									.join("\n"),
+								value: content,
 							},
 						],
 					}),
-				}).catch(async (error) => {
-					await Promise.all([
-						log(
-							{
-								level: "error",
-								app: url.hostname,
-								message: error.message,
-								stack: error.stack,
-								status: error.status,
-							},
-							env.SENDGRID_TOKEN
-						),
-						discord(
-							`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
-							env.DISCORD_WEBHOOK
-						),
-					]);
 				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error(`Sendgrid responded with ${response.status}`);
+						}
+						ctx.waitUntil(
+							log(
+								{
+									level: "info",
+									app: url.hostname,
+									message: "Sent email",
+									details: `Email sent to ${recipient}:\n${content}`,
+								},
+								env.SENDGRID_TOKEN
+							)
+						);
+					})
+					.catch(async (error) => {
+						await Promise.all([
+							log(
+								{
+									level: "error",
+									app: url.hostname,
+									message: error.message,
+									stack: error.stack,
+									status: error.status,
+								},
+								env.SENDGRID_TOKEN
+							),
+							discord(
+								`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
+								env.DISCORD_WEBHOOK
+							),
+						]);
+					})
 			);
 
 			return new Response("Sent", {
