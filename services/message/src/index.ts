@@ -102,10 +102,10 @@ export default {
 						{
 							level: "info",
 							app,
-							message: "Sent email",
-							details: `Email sent to ${recipient}:\n${content}`,
+							message: `Email sent to ${recipient}`,
+							details: content,
 						},
-						env.SENDGRID_TOKEN
+						env.LOGZIO_TOKEN
 					)
 				);
 			} catch (error) {
@@ -119,7 +119,7 @@ export default {
 								stack: error.stack,
 								status: error.status,
 							},
-							env.SENDGRID_TOKEN
+							env.LOGZIO_TOKEN
 						),
 						discord(
 							`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
