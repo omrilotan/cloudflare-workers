@@ -1,12 +1,15 @@
-export async function log(record: object, token: string): Promise<Response> {
+interface Record {
+	level: "debug" | "verbose" | "info" | "warn" | "error" | "critical";
+	app: string;
+	[key: string]: string;
+}
+
+export async function log(record: Record, token: string): Promise<Response> {
 	if (typeof record !== "object") {
 		throw new TypeError("record must be an object");
 	}
 	if (typeof token !== "string") {
 		throw new TypeError("token must be a string");
-	}
-	if (!Object.hasOwn(record, "level")) {
-		throw new RangeError("record must have a level");
 	}
 
 	const response = await fetch(
@@ -24,4 +27,6 @@ export async function log(record: object, token: string): Promise<Response> {
 	if (!response.ok) {
 		throw new Error(`Logz.io responded with ${response.status}`);
 	}
+
+	return response;
 }

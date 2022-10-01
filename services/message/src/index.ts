@@ -1,4 +1,5 @@
 import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries";
+import { appName } from "../../../lib/appName";
 import { discord } from "../../../lib/discord";
 import { log } from "../../../lib/log";
 import { envVars } from "./env";
@@ -14,6 +15,7 @@ export default {
 		ctx: ExecutionContext
 	): Promise<Response> {
 		const url = new URL(request.url);
+		const app = appName(url);
 		try {
 			if (envVars.some((key) => !env[key])) {
 				throw new Error("Missing environment variables");
@@ -99,7 +101,7 @@ export default {
 					log(
 						{
 							level: "info",
-							app: url.hostname,
+							app,
 							message: "Sent email",
 							details: `Email sent to ${recipient}:\n${content}`,
 						},
@@ -112,7 +114,7 @@ export default {
 						log(
 							{
 								level: "error",
-								app: url.hostname,
+								app,
 								message: error.message,
 								stack: error.stack,
 								status: error.status,
@@ -136,7 +138,7 @@ export default {
 				log(
 					{
 						level: "error",
-						app: url.hostname,
+						app,
 						message: error.message,
 						stack: error.stack,
 						status: error.status,

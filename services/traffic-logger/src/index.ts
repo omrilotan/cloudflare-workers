@@ -1,5 +1,6 @@
 import isbot from "isbot";
 import { v4 as uuidv4 } from "uuid";
+import { appName } from "../../../lib/appName";
 import { discord } from "../../../lib/discord";
 import { log } from "../../../lib/log";
 import { continentCodeToName } from "../../../lib/continent";
@@ -24,6 +25,9 @@ export default {
 	): Promise<Response> {
 		ctx.passThroughOnException();
 		const start = Date.now();
+		const url = new URL(request.url);
+		const app = appName(url);
+
 		try {
 			const url = new URL(request.url);
 			const cf = request.cf as IncomingRequestCfProperties;
@@ -103,23 +107,24 @@ export default {
 			const location = [cf.city, countryName(cf.country)]
 				.filter(Boolean)
 				.join(", ");
-			const message = `"${url.href}" from ${location}`;
+			const { status } = originalResponse;
+			const message = `${status} "${url.href}" from ${location}`;
 
 			ctx.waitUntil(
 				log(
 					{
 						level: "info",
+						app,
 						message,
-						app: url.hostname,
+						duration: Date.now() - start,
 						request: [request.method, url.href].join(" "),
 						location,
 						continent: continentCodeToName(cf.continent),
 						ip,
 						as: [cf.asOrganization, cf.asn].filter(Boolean).join(", "),
-						status: originalResponse.status,
+						status,
 						content_type: contentType,
 						cache_status: cacheStatus,
-						duration: Date.now() - start,
 						browser: parseCHUA(request.headers.get("sec-ch-ua")) || userAgent,
 						referrer: request.headers.get("referer"),
 						request_id: uuid,
@@ -134,12 +139,12 @@ export default {
 				log(
 					{
 						level: "error",
+						app,
 						message: `Error fetching "${request.url}"`,
-						app: new URL(request.url).hostname,
+						duration: Date.now() - start,
 						request: [request.method, request.url].join(" "),
 						error: message,
 						stack,
-						duration: Date.now() - start,
 					},
 					env.LOGZIO_TOKEN
 				)
