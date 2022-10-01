@@ -117,6 +117,7 @@ export default {
 						ip,
 						as: [cf.asOrganization, cf.asn].filter(Boolean).join(", "),
 						status: originalResponse.status,
+						content_type: contentType,
 						cache_status: cacheStatus,
 						duration: Date.now() - start,
 						browser: parseCHUA(request.headers.get("sec-ch-ua")) || userAgent,
