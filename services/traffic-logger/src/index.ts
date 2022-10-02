@@ -2,10 +2,9 @@ import isbot from "isbot";
 import { v4 as uuidv4 } from "uuid";
 import { appName } from "../../../lib/appName";
 import { discord } from "../../../lib/discord";
-import { log } from "../../../lib/log";
-import { continentCodeToName } from "../../../lib/continent";
-import { countryName } from "../../../lib/countryName";
 import { isDataCentreAutonomousSystem } from "../../../lib/isDataCentreAutonomousSystem";
+import { locationDeails } from "../../../lib/locationDetails";
+import { log } from "../../../lib/log";
 import { parseCHUA } from "../../../lib/parse-ch-ua";
 import { type } from "../../../lib/type";
 import { cacheHit } from "./cacheHit";
@@ -30,7 +29,6 @@ export default {
 
 		try {
 			const url = new URL(request.url);
-			const cf = request.cf as IncomingRequestCfProperties;
 			const uuid = uuidv4();
 
 			const originalResponse = await fetch(request, {
@@ -95,19 +93,19 @@ export default {
 			if (isbot(userAgent)) {
 				return mutableResponse;
 			}
-			if (isDataCentreAutonomousSystem(cf.asOrganization)) {
+
+			const { continent, country, city, ip, asOrg, asn } =
+				locationDeails(request);
+
+			if (isDataCentreAutonomousSystem(asOrg)) {
 				return mutableResponse;
 			}
 			const contentType = type(originalResponse.headers.get("content-type"));
 			if (["css", "image", "js"].includes(contentType)) {
 				return mutableResponse;
 			}
-
-			const ip = request.headers.get("cf-connecting-ip");
-			const location = [cf.city, countryName(cf.country)]
-				.filter(Boolean)
-				.join(", ");
 			const { status } = originalResponse;
+			const location = [city, country, continent].filter(Boolean).join(", ");
 			const message = `${status} "${url.href}" from ${location}`;
 
 			ctx.waitUntil(
@@ -120,9 +118,8 @@ export default {
 						duration: Date.now() - start,
 						request: [request.method, url.href].join(" "),
 						location,
-						continent: continentCodeToName(cf.continent),
 						ip,
-						as: [cf.asOrganization, cf.asn].filter(Boolean).join(", "),
+						as: [asOrg, asn].filter(Boolean).join(", "),
 						status,
 						content_type: contentType,
 						cache_status: cacheStatus,

@@ -8,6 +8,5 @@ const codes = new Map<string, string>([
 	["SA", "South America"],
 ]);
 
-export const continentCodeToName = (
-	code: string | undefined
-): string | undefined => code && codes.get(code);
+export const continentName = (code: string | undefined): string | undefined =>
+	code && codes.get(code);

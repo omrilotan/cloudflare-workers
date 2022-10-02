@@ -1,5 +1,6 @@
 import { MockExecutionContext } from "../../mocks/executionContext";
 import { fetchMock } from "../../mocks/fetchMock";
+import { requestEnrichment } from "../../mocks/requestEnrichment";
 import type { Env } from "./src/env";
 
 const log = jest.fn();
@@ -21,6 +22,7 @@ const contact = "07873670381";
 
 describe("services/message", () => {
 	beforeAll(async () => {
+		requestEnrichment.mount();
 		await fetchMock.mount();
 		(globalThis.fetch as jest.Mock).mockImplementation(
 			async () => new Response("Ok", { status: 200 })
@@ -33,6 +35,7 @@ describe("services/message", () => {
 		jest.resetAllMocks();
 	});
 	afterAll(async () => {
+		requestEnrichment.unmount();
 		fetchMock.unmount();
 		jest.restoreAllMocks();
 	});
@@ -58,8 +61,8 @@ describe("services/message", () => {
 			);
 			expect(payload.from.email).toBe("authorised.with.sendgrid@domain.net");
 			expect(payload.subject).toBe("Received email from www.website.com");
-			expect(payload.content[0].value).toBe(
-				"from: Shmuel\ncontact: 07873670381"
+			expect(payload.content[0].value).toMatch(
+				/^from: Shmuel\ncontact: 07873670381/
 			);
 
 			expect(response.status).toBe(200);
@@ -90,8 +93,8 @@ describe("services/message", () => {
 			);
 			expect(payload.from.email).toBe("authorised.with.sendgrid@domain.net");
 			expect(payload.subject).toBe("Received email");
-			expect(payload.content[0].value).toBe(
-				"from: Shmuel\ncontact: 07873670381"
+			expect(payload.content[0].value).toMatch(
+				/^from: Shmuel\ncontact: 07873670381/
 			);
 		});
 	});

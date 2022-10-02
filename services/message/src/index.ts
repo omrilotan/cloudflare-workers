@@ -1,6 +1,7 @@
-import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries";
 import { appName } from "../../../lib/appName";
+import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries";
 import { discord } from "../../../lib/discord";
+import { locationDeails } from "../../../lib/locationDetails";
 import { log } from "../../../lib/log";
 import { envVars } from "./env";
 import type { Env } from "./env";
@@ -61,6 +62,10 @@ export default {
 				});
 			}
 
+			const { country, city, ip } = locationDeails(request);
+			const location = [city, country].filter(Boolean).join(", ");
+			location && Object.assign(rest, { location });
+
 			const content = Object.entries(rest)
 				.map(([key, value]) => [key, value].join(": "))
 				.join("\n");
@@ -105,6 +110,8 @@ export default {
 							app,
 							message: `Email sent to ${recipient}`,
 							details: content,
+							location,
+							ip,
 						},
 						env.LOGZIO_TOKEN
 					)
@@ -136,6 +143,7 @@ export default {
 				headers: new Headers([...CORSHeaderEntries, versionHeaderEntry]),
 			});
 		} catch (error: any) {
+			console.error(error);
 			ctx.waitUntil(
 				log(
 					"error",
