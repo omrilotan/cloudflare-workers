@@ -1,10 +1,16 @@
 export type CacheStatus =
-	| "HIT"
-	| "MISS"
-	| "REVALIDATED"
 	| "BYPASS"
+	| "DEFERRED"
+	| "DYNAMIC"
 	| "EXPIRED"
-	| "DYNAMIC";
+	| "HIT"
+	| "IGNORED"
+	| "MISS"
+	| "NONE"
+	| "REVALIDATED"
+	| "STALE"
+	| "STREAM HIT"
+	| "UPDATING";
 
 export const cacheHit = (status: CacheStatus): 0 | 1 =>
-	["HIT", "REVALIDATED"].includes(status) ? 1 : 0;
+	["HIT", "STREAM HIT", "REVALIDATED"].includes(status.toUpperCase()) ? 1 : 0;

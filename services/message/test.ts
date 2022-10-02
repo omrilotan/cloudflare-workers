@@ -114,7 +114,7 @@ describe("services/message", () => {
 			expect(response.status).toBe(200);
 
 			await ctx.drain();
-			const [[{ level, message, stack, status }]] = log.mock.calls;
+			const [[type, { level, message, stack, status }]] = log.mock.calls;
 			expect(level).toBe("error");
 			expect(message).toBe("Error sending email");
 			expect(typeof stack).toBe("string");

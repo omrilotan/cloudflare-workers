@@ -1,10 +1,14 @@
 interface Record {
 	level: "debug" | "verbose" | "info" | "warn" | "error" | "critical";
 	app: string;
-	[key: string]: string;
+	[key: string]: string | number | boolean | undefined;
 }
 
-export async function log(record: Record, token: string): Promise<Response> {
+export async function log(
+	type: string,
+	record: Record,
+	token: string
+): Promise<Response> {
 	if (typeof record !== "object") {
 		throw new TypeError("record must be an object");
 	}
@@ -13,7 +17,7 @@ export async function log(record: Record, token: string): Promise<Response> {
 	}
 
 	const response = await fetch(
-		`https://listener.logz.io:8071/?token=${token}&type=traffic`,
+		`https://listener.logz.io:8071/?token=${token}&type=${type}`,
 		{
 			method: "POST",
 			headers: new Headers([

@@ -99,6 +99,7 @@ export default {
 				}
 				ctx.waitUntil(
 					log(
+						"email",
 						{
 							level: "info",
 							app,
@@ -112,6 +113,7 @@ export default {
 				ctx.waitUntil(
 					Promise.all([
 						log(
+							"error",
 							{
 								level: "error",
 								app,
@@ -136,6 +138,7 @@ export default {
 		} catch (error: any) {
 			ctx.waitUntil(
 				log(
+					"error",
 					{
 						level: "error",
 						app,

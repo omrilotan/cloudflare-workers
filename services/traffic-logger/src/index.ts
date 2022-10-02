@@ -112,6 +112,7 @@ export default {
 
 			ctx.waitUntil(
 				log(
+					"traffic",
 					{
 						level: "info",
 						app,
@@ -137,6 +138,7 @@ export default {
 			const { message, stack } = error as Error;
 			ctx.waitUntil(
 				log(
+					"error",
 					{
 						level: "error",
 						app,
