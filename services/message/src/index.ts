@@ -3,6 +3,7 @@ import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries";
 import { discord } from "../../../lib/discord";
 import { locationDeails } from "../../../lib/locationDetails";
 import { log } from "../../../lib/log";
+import { parseCHUA } from "../../../lib/parse-ch-ua";
 import { envVars } from "./env";
 import type { Env } from "./env";
 import { fromSite } from "./fromSite";
@@ -110,6 +111,7 @@ export default {
 							app,
 							message: `Email sent to ${recipient}`,
 							details: content,
+							browser: parseCHUA(request.headers.get("sec-ch-ua")) || request.headers.get("user-agent"),
 							location,
 							ip,
 						},
