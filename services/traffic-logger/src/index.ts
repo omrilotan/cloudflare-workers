@@ -7,8 +7,8 @@ import { locationDeails } from "../../../lib/locationDetails";
 import { log } from "../../../lib/log";
 import { parseCHUA } from "../../../lib/parse-ch-ua";
 import { type } from "../../../lib/type";
-import { cacheHit } from "./cacheHit";
-import type { CacheStatus } from "./cacheHit";
+import { cacheHit } from "../../../lib/cacheHit";
+import type { CacheStatus } from "../../../lib/cacheHit";
 
 export interface Env {
 	DISCORD_WEBHOOK: string;
@@ -90,10 +90,6 @@ export default {
 				(header) => mutableResponse.headers.delete(header)
 			);
 			const userAgent = request.headers.get("user-agent");
-			if (isbot(userAgent)) {
-				return mutableResponse;
-			}
-
 			const { continent, country, city, ip, asOrg, asn } =
 				locationDeails(request);
 
@@ -120,6 +116,7 @@ export default {
 						location,
 						ip,
 						as: [asOrg, asn].filter(Boolean).join(", "),
+						automated: isbot(userAgent),
 						status,
 						content_type: contentType,
 						cache_status: cacheStatus,

@@ -3,17 +3,11 @@ const dataCentreAutonomousSystemList = new Set<string>([
 	"Alibaba",
 	"Amazon.com",
 	"Amazon",
-	"DATACITY",
 	"Digital Ocean",
 	"DigitalOcean",
 	"Flyservers S.A.",
 	"GoDaddy.com, LLC",
-	"Google Cloud",
-	"GTHost",
 	"Hetzner Online GmbH",
-	"Hosteur SAS",
-	"Hostwinds LLC.",
-	"InterBS S.R.L. BAEHOST",
 	"Intergrid Group Pty",
 	"Internet Archive",
 	"Ispconnected",
@@ -22,14 +16,15 @@ const dataCentreAutonomousSystemList = new Set<string>([
 	"Microsoft Azure",
 	"Microsoft Corporation",
 	"Namecheap",
-	"Oracle Cloud",
 	"OVH SAS",
-	"ServerMania",
 	"Strato AG",
-	"Tencent cloud computing",
-	"Vivid Hosting",
-	"Web Hosted Group Ltd",
 ]);
 
+const dataCentreAutonomousSystemPattern = new RegExp(
+	["cloud", "data", "host", "server"].join("|"),
+	"i"
+);
+
 export const isDataCentreAutonomousSystem = (as: string): boolean =>
+	dataCentreAutonomousSystemPattern.test(as) ||
 	dataCentreAutonomousSystemList.has(as);
