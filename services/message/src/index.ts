@@ -111,7 +111,9 @@ export default {
 							app,
 							message: `Email sent to ${recipient}`,
 							details: content,
-							browser: parseCHUA(request.headers.get("sec-ch-ua")) || request.headers.get("user-agent"),
+							browser:
+								parseCHUA(request.headers.get("sec-ch-ua")) ||
+								request.headers.get("user-agent"),
 							location,
 							ip,
 						},
