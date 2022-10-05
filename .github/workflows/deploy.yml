@@ -39,6 +39,12 @@ jobs:
             exit 1
           fi
       - run: npm t
+      - uses: trstringer/manual-approval@v1
+        if: github.ref != 'refs/heads/main'
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: omrilotan
+          minimum-approvals: 1
       - name: Deploy
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
