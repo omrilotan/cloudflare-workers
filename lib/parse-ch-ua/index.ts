@@ -17,7 +17,7 @@ export function parseCHUA(header: string): string | undefined {
 		.filter(([k]) => !k.includes("Brand"));
 
 	if (dict.length > 1) {
-		// Remove "chromium" user agent
+		// Remove "chromium" user agent if there's another match
 		const index = dict.findIndex(([k]) => /^chromium$/i.test(k));
 		index > -1 && dict.splice(index, 1);
 	}

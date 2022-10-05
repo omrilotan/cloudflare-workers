@@ -52,17 +52,18 @@ export const fetchMock = {
 	},
 
 	/**
-	 * Restore the global fetch
-	 */
-	unmount: (): void => {
-		fetchMock.reset();
-		globalThis.fetch = fetch;
-	},
-
-	/**
 	 * Await any hanging promises
 	 */
 	drain: async (): Promise<void> => {
 		await Promise.all(Array.from(fetchMock.promises));
+	},
+
+	/**
+	 * Restore the global fetch
+	 */
+	unmount: async (): Promise<void> => {
+		await fetchMock.drain();
+		fetchMock.reset();
+		globalThis.fetch = fetch;
 	},
 };

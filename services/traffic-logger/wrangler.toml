@@ -4,7 +4,6 @@ compatibility_date = "2022-07-22"
 routes = [
 	{ pattern = "*danisilas.com/*", zone_id = "d9470a8d1d50c3187550f48efa23e92f" },
 	"do.omrilotan.com/*",
-	"eyeball.omrilotan.com/*",
 	"omrilotan.com",
 	"omrilotan.com/*"
 ]

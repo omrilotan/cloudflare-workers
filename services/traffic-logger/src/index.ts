@@ -9,12 +9,9 @@ import { parseCHUA } from "../../../lib/parse-ch-ua";
 import { type } from "../../../lib/type";
 import { cacheHit } from "../../../lib/cacheHit";
 import type { CacheStatus } from "../../../lib/cacheHit";
+import type { Env } from "./env";
 
-export interface Env {
-	DISCORD_WEBHOOK: string;
-	LOGZIO_TOKEN: string;
-	VERSION: string;
-}
+let count = 0;
 
 export default {
 	async fetch(
@@ -80,9 +77,7 @@ export default {
 				],
 				[
 					"Server-Timing",
-					`Cache-Status; dur=${cacheHit(
-						cacheStatus
-					)}; desc="cache ${cacheStatus}"`,
+					`Cache-Status; dur=${cacheHit(cacheStatus)}; desc="${cacheStatus}"`,
 				],
 			].forEach(([name, value]) => mutableResponse.headers.append(name, value));
 
@@ -93,16 +88,12 @@ export default {
 			const { continent, country, city, ip, asOrg, asn } =
 				locationDeails(request);
 
-			if (isDataCentreAutonomousSystem(asOrg)) {
-				return mutableResponse;
-			}
 			const contentType = type(originalResponse.headers.get("content-type"));
 			if (["css", "image", "js"].includes(contentType)) {
-				return mutableResponse;
+				return mutableResponse; // Skip log for static files
 			}
 			const { status } = originalResponse;
 			const location = [city, country, continent].filter(Boolean).join(", ");
-			const message = `${status} "${url.href}" from ${location}`;
 
 			ctx.waitUntil(
 				log(
@@ -110,19 +101,20 @@ export default {
 					{
 						level: "info",
 						app,
-						message,
+						message: `${status} "${url.href}" from ${location}`,
 						duration: Date.now() - start,
 						request: [request.method, url.href].join(" "),
 						location,
 						ip,
 						as: [asOrg, asn].filter(Boolean).join(", "),
-						automated: isbot(userAgent),
+						automated: isDataCentreAutonomousSystem(asOrg) || isbot(userAgent),
 						status,
 						content_type: contentType,
 						cache_status: cacheStatus,
 						browser: parseCHUA(request.headers.get("sec-ch-ua")) || userAgent,
 						referrer: request.headers.get("referer"),
 						request_id: uuid,
+						logger: env.VERSION,
 					},
 					env.LOGZIO_TOKEN
 				)

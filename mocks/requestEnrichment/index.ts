@@ -37,7 +37,7 @@ export const requestEnrichment = {
 	},
 	unmount: () => {
 		Object.defineProperty(Request.prototype, "cf", {
-			value: undefined,
+			value: null,
 			writable: true,
 			enumerable: true,
 			configurable: true,

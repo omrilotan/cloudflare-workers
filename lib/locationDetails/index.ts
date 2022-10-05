@@ -30,7 +30,10 @@ export function locationDeails(request: Request): LocationDetails {
 			get: () => city,
 		},
 		ip: {
-			get: () => request.headers.get("cf-connecting-ip") || "unknown",
+			get: () =>
+				request.headers.get("true-client-ip") ||
+				request.headers.get("cf-connecting-ip") ||
+				"unknown",
 		},
 		asOrg: {
 			get: () => asOrg,

@@ -13,4 +13,6 @@ export type CacheStatus =
 	| "UPDATING";
 
 export const cacheHit = (status: CacheStatus): 0 | 1 =>
-	["HIT", "STREAM HIT", "REVALIDATED"].includes(status.toUpperCase()) ? 1 : 0;
+	["HIT", "STREAM HIT", "REVALIDATED"].includes(status?.toUpperCase?.())
+		? 1
+		: 0;
