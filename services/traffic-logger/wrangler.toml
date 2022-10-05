@@ -1,9 +1,12 @@
-name = "traffic-logger"
+name = "traffic-logger-local"
 main = "src/index.ts"
 compatibility_date = "2022-07-22"
+
+[env.canary]
+name = "traffic-logger-canary"
+
+[env.production]
+name = "traffic-logger"
 routes = [
-	{ pattern = "*danisilas.com/*", zone_id = "d9470a8d1d50c3187550f48efa23e92f" },
-	"do.omrilotan.com/*",
-	"omrilotan.com",
-	"omrilotan.com/*"
+	{ pattern = "*danisilas.com/*", zone_id = "d9470a8d1d50c3187550f48efa23e92f" }
 ]

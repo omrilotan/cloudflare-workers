@@ -4,9 +4,7 @@
   "private": true,
   "scripts": {
     "start": "wrangler dev src/index.ts --local true --host omrilotan.com",
-    "predeploy": "../../scripts/secrets.sh verify DISCORD_WEBHOOK LOGZIO_TOKEN",
-    "deploy": "wrangler publish",
-    "postdeploy": "../../scripts/secrets.sh push DISCORD_WEBHOOK LOGZIO_TOKEN",
+    "deploy": "./scripts/deploy.sh",
     "tail": "wrangler tail"
   },
   "dependencies": {

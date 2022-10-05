@@ -1,0 +1,11 @@
+name = "traffic-logger-rollout"
+main = "src/index.ts"
+compatibility_date = "2022-07-22"
+routes = ["do.omrilotan.com/*", "omrilotan.com", "omrilotan.com/*"]
+services = [
+	{ binding = "APPLICATION", service = "traffic-logger", environment = "production" },
+	{ binding = "CANARY", service = "traffic-logger-canary", environment = "production" }
+]
+kv_namespaces = [
+	{ binding = "ROLLOUT", id = "309b38e6127b48eb86ff9a58e715ac15" }
+]
