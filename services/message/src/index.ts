@@ -10,7 +10,7 @@ import { fromSite } from "./fromSite";
 import { readRequestBody } from "./readRequestBody";
 import { send } from "./send";
 
-export default {
+const handler: ExportedHandler = {
 	async fetch(
 		request: Request,
 		env: Env,
@@ -173,3 +173,5 @@ export default {
 		}
 	},
 };
+
+export default handler;

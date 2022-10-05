@@ -13,7 +13,7 @@ import type { Env } from "./env";
 
 let count = 0;
 
-export default {
+const handler: ExportedHandler = {
 	async fetch(
 		request: Request,
 		env: Env,
@@ -147,3 +147,5 @@ export default {
 		}
 	},
 };
+
+export default handler;
