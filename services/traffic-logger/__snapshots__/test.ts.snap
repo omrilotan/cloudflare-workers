@@ -3,6 +3,7 @@
 exports[`traffic-logger logs traffic for https://httpbin.org/index.html 1`] = `
 {
   "app": "httpbin.org",
+  "app_version": "test-2022-10-11-a3b445d",
   "as": "Google Cloud, 395747",
   "automated": true,
   "browser": "Google Chrome 105",
@@ -27,7 +28,7 @@ exports[`traffic-logger logs traffic for https://httpbin.org/index.html 2`] = `
   ],
   [
     "app-version",
-    "a3b445d",
+    "test-2022-10-11-a3b445d",
   ],
   [
     "cf-cache-status",
@@ -60,7 +61,7 @@ exports[`traffic-logger logs traffic for https://httpbin.org/script.239874.js 1`
   ],
   [
     "app-version",
-    "a3b445d",
+    "test-2022-10-11-a3b445d",
   ],
   [
     "cf-cache-status",

@@ -8,6 +8,8 @@ const env: Env = {
 	DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1234567890/1234567890",
 	LOGZIO_TOKEN: "xmC8duHhUaqqYoBWbMgGq1g6jxUJwtPG",
 	VERSION: "a3b445d",
+	RELEASE: "2022-10-11",
+	VARIATION: "test",
 };
 
 const log = jest.fn();

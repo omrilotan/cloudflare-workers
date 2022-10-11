@@ -5,6 +5,7 @@ shift
 rest=$@
 help="Usage: ./secrets.sh [help|verify|push] [ENV_VAR_1] [ENV_VAR_2] ... -- <options>"
 sha=$(git rev-parse --short HEAD)
+release=$(git log -1 --date=format:"%Y-%m-%d" --format="%ad")
 
 vars=()
 opts=()
@@ -43,6 +44,7 @@ if [[ $action == "push" ]]; then
 		echo $value | wrangler secret put $var ${opts[@]}
 	done
 	echo $sha | wrangler secret put VERSION ${opts[@]}
+	echo $release | wrangler secret put RELEASE ${opts[@]}
 	exit 0
 fi
 

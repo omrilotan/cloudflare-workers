@@ -23,6 +23,7 @@ const handler: ExportedHandler = {
 		const start = Date.now();
 		const url = new URL(request.url);
 		const app = appName(url);
+		const appVersion = [env.VARIATION, env.RELEASE, env.VERSION].join("-");
 
 		try {
 			const url = new URL(request.url);
@@ -70,7 +71,7 @@ const handler: ExportedHandler = {
 
 			// Add headers
 			[
-				["App-Version", [env.VERSION, env.VARIATION].join("-")],
+				["App-Version", appVersion],
 				[
 					"Server-Timing",
 					`CDN-Origin-Fetch; dur=${Date.now() - start}; desc="origin rtt"`,
@@ -101,6 +102,7 @@ const handler: ExportedHandler = {
 					{
 						level: "info",
 						app,
+						app_version: appVersion,
 						message: `${status} "${url.href}" from ${location}`,
 						duration: Date.now() - start,
 						request: [request.method, url.href].join(" "),
@@ -128,6 +130,7 @@ const handler: ExportedHandler = {
 					{
 						level: "error",
 						app,
+						app_version: appVersion,
 						message: `Error fetching "${request.url}"`,
 						duration: Date.now() - start,
 						request: [request.method, request.url].join(" "),
