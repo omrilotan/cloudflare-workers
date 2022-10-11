@@ -70,7 +70,7 @@ const handler: ExportedHandler = {
 
 			// Add headers
 			[
-				["App-Version", env.VERSION],
+				["App-Version", [env.VERSION, env.VARIATION].join("-")],
 				[
 					"Server-Timing",
 					`CDN-Origin-Fetch; dur=${Date.now() - start}; desc="origin rtt"`,

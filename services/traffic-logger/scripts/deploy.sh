@@ -1,11 +1,20 @@
 #!/usr/bin/env bash
 
 branch=$(git rev-parse --abbrev-ref HEAD)
-env="canary"
-if [ $branch == "main" ]; then
-	env="production"
+
+echo "Deploy canary"
+../../scripts/secrets.sh verify DISCORD_WEBHOOK LOGZIO_TOKEN -- --env canary
+wrangler publish --env canary
+../../scripts/secrets.sh push DISCORD_WEBHOOK LOGZIO_TOKEN -- --env canary
+
+if [ $branch != "main" ]; then
+	exit 0
 fi
 
-../../scripts/secrets.sh verify DISCORD_WEBHOOK LOGZIO_TOKEN -- --env $env
-wrangler publish --env $env
-../../scripts/secrets.sh push DISCORD_WEBHOOK LOGZIO_TOKEN -- --env $env
+echo "Deploy main"
+../../scripts/secrets.sh verify DISCORD_WEBHOOK LOGZIO_TOKEN -- --env main
+wrangler publish --env main
+../../scripts/secrets.sh push DISCORD_WEBHOOK LOGZIO_TOKEN -- --env main
+
+echo "Deploy gateway"
+wrangler publish --env gateway

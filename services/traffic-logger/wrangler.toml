@@ -2,11 +2,29 @@ name = "traffic-logger-local"
 main = "src/index.ts"
 compatibility_date = "2022-07-22"
 
+[env.gateway]
+name = "traffic-logger-gateway"
+main = "src/gateway/index.ts"
+routes = ["do.omrilotan.com/*", "omrilotan.com", "omrilotan.com/*"]
+services = [
+	{ binding = "MAIN", service = "traffic-logger-main", environment = "production" },
+	{ binding = "CANARY", service = "traffic-logger-canary", environment = "production" }
+]
+kv_namespaces = [
+	{ binding = "ROLLOUT", id = "309b38e6127b48eb86ff9a58e715ac15" }
+]
+
 [env.canary]
 name = "traffic-logger-canary"
 
-[env.production]
-name = "traffic-logger"
+[env.canary.vars]
+VARIATION = "canary"
+
+[env.main]
+name = "traffic-logger-main"
 routes = [
 	{ pattern = "*danisilas.com/*", zone_id = "d9470a8d1d50c3187550f48efa23e92f" }
 ]
+
+[env.main.vars]
+VARIATION = "main"

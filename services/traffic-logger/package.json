@@ -5,7 +5,8 @@
   "scripts": {
     "start": "wrangler dev src/index.ts --local true --host omrilotan.com",
     "deploy": "./scripts/deploy.sh",
-    "tail": "wrangler tail"
+    "tail": "wrangler tail",
+    "rollout": "wrangler kv:key put --binding=ROLLOUT \"canary\""
   },
   "dependencies": {
     "isbot": "^3.5.4",
