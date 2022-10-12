@@ -2,20 +2,28 @@ import { CacheStatus } from "../../lib/cacheHit";
 import { MockExecutionContext } from "../../mocks/executionContext";
 import { fetchMock } from "../../mocks/fetchMock";
 import { requestEnrichment } from "../../mocks/requestEnrichment";
-import type { Env } from "./src/env";
+import type { DataPoint, Env } from "./src/interfaces";
 
 const env: Env = {
 	DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1234567890/1234567890",
 	LOGZIO_TOKEN: "xmC8duHhUaqqYoBWbMgGq1g6jxUJwtPG",
 	VERSION: "a3b445d",
 	RELEASE: "2022-10-11",
+	SEND_ANALYTICS: true,
+	SEND_LOGS: true,
 	VARIATION: "test",
+	TRAFFIC_ANALYTICS: {
+		writeDataPoint: jest.fn(),
+	},
 };
 
 const log = jest.fn();
 const discord = jest.fn();
 let worker;
 const ctx = new MockExecutionContext();
+const UID_PATTERN =
+	/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
+const INDEX_PATTERN = /[0-9a-f]{32}/;
 
 describe("traffic-logger", (): void => {
 	beforeAll(async (): Promise<void> => {
@@ -26,7 +34,7 @@ describe("traffic-logger", (): void => {
 		);
 		jest.mock("../../lib/log", () => ({ log }));
 		jest.mock("../../lib/discord", () => ({ discord }));
-		worker = (await import("./src")).default;
+		worker = (await import("./src/app")).default;
 	});
 	afterEach(async (): Promise<void> => {
 		await fetchMock.drain();
@@ -47,7 +55,7 @@ describe("traffic-logger", (): void => {
 			true,
 		],
 		[
-			"logs traffic for",
+			"does not log traffic for",
 			"https://httpbin.org/script.239874.js",
 			"HIT",
 			"application/javascript",
@@ -100,13 +108,18 @@ describe("traffic-logger", (): void => {
 				const [[type, record, token]] = log.mock.calls;
 				expect(type).toBe("traffic");
 				expect(token).toBe(env.LOGZIO_TOKEN);
-				expect(record.request_id).toMatch(
-					/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
-				);
+				expect(record.request_id).toMatch(UID_PATTERN);
 				expect(record.duration).toBeGreaterThan(-1);
 				delete record.request_id;
 				delete record.duration;
 				expect(record).toMatchSnapshot();
+				const [[analytics_record]] = (
+					env.TRAFFIC_ANALYTICS.writeDataPoint as jest.Mock
+				).mock.calls;
+				expect(analytics_record.indexes.pop()).toMatch(INDEX_PATTERN);
+				const duration = analytics_record.doubles.splice(1, 1)[0];
+				expect(duration).toBeGreaterThan(-1);
+				expect(analytics_record).toMatchSnapshot();
 			}
 
 			expect(response.status).toBe(200);

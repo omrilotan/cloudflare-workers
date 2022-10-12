@@ -1,59 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`traffic-logger logs traffic for https://httpbin.org/index.html 1`] = `
-{
-  "app": "httpbin.org",
-  "app_version": "test-2022-10-11-a3b445d",
-  "as": "Google Cloud, 395747",
-  "automated": true,
-  "browser": "Google Chrome 105",
-  "cache_status": "MISS",
-  "content_type": "html",
-  "ip": "203.0.113.1",
-  "level": "info",
-  "location": "Austin, United States, North America",
-  "logger": "a3b445d",
-  "message": "200 "https://httpbin.org/index.html" from Austin, United States, North America",
-  "referrer": "https://www.duckduckgo.com/",
-  "request": "GET https://httpbin.org/index.html",
-  "status": 200,
-}
-`;
-
-exports[`traffic-logger logs traffic for https://httpbin.org/index.html 2`] = `
-[
-  [
-    "accept-ch",
-    "UA,Sec-CH-UA,Sec-CH-UA-Mobile,Sec-CH-UA-Full-Version,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-UA-Platform,Sec-CH-UA-Platform-Version,ECT",
-  ],
-  [
-    "app-version",
-    "test-2022-10-11-a3b445d",
-  ],
-  [
-    "cf-cache-status",
-    "MISS",
-  ],
-  [
-    "content-type",
-    "text/html",
-  ],
-  [
-    "strict-transport-security",
-    "max-age=31536000; includeSubDomains",
-  ],
-  [
-    "timing-allow-origin",
-    "*",
-  ],
-  [
-    "vary",
-    "Accept, Accept-Encoding, User-Agent",
-  ],
-]
-`;
-
-exports[`traffic-logger logs traffic for https://httpbin.org/script.239874.js 1`] = `
+exports[`traffic-logger does not log traffic for https://httpbin.org/script.239874.js 1`] = `
 [
   [
     "accept-ch",
@@ -70,6 +17,75 @@ exports[`traffic-logger logs traffic for https://httpbin.org/script.239874.js 1`
   [
     "content-type",
     "application/javascript",
+  ],
+  [
+    "strict-transport-security",
+    "max-age=31536000; includeSubDomains",
+  ],
+  [
+    "timing-allow-origin",
+    "*",
+  ],
+  [
+    "vary",
+    "Accept, Accept-Encoding, User-Agent",
+  ],
+]
+`;
+
+exports[`traffic-logger logs traffic for https://httpbin.org/index.html 1`] = `
+{
+  "app": "httpbin.org",
+  "app_version": "test-2022-10-11-a3b445d",
+  "as": "Google Cloud, 395747",
+  "automated": true,
+  "browser": "Google Chrome 105",
+  "cache_status": "MISS",
+  "content_type": "html",
+  "ip": "203.0.113.1",
+  "level": "info",
+  "location": "Austin, United States, North America",
+  "message": "200 "https://httpbin.org/index.html" from Austin, United States, North America",
+  "referrer": "https://www.duckduckgo.com/",
+  "request": "GET https://httpbin.org/index.html",
+  "status": 200,
+}
+`;
+
+exports[`traffic-logger logs traffic for https://httpbin.org/index.html 2`] = `
+{
+  "blobs": [
+    "httpbin.org",
+    "test-2022-10-11-a3b445d",
+    "GET",
+    "https://httpbin.org/index.html",
+    "html",
+    "MISS",
+  ],
+  "doubles": [
+    200,
+  ],
+  "indexes": [],
+}
+`;
+
+exports[`traffic-logger logs traffic for https://httpbin.org/index.html 3`] = `
+[
+  [
+    "accept-ch",
+    "UA,Sec-CH-UA,Sec-CH-UA-Mobile,Sec-CH-UA-Full-Version,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-UA-Platform,Sec-CH-UA-Platform-Version,ECT",
+  ],
+  [
+    "app-version",
+    "test-2022-10-11-a3b445d",
+  ],
+  [
+    "cf-cache-status",
+    "MISS",
+  ],
+  [
+    "content-type",
+    "text/html",
   ],
   [
     "strict-transport-security",

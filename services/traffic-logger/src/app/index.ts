@@ -1,17 +1,15 @@
 import isbot from "isbot";
 import { v4 as uuidv4 } from "uuid";
-import { appName } from "../../../lib/appName";
-import { discord } from "../../../lib/discord";
-import { isDataCentreAutonomousSystem } from "../../../lib/isDataCentreAutonomousSystem";
-import { locationDeails } from "../../../lib/locationDetails";
-import { log } from "../../../lib/log";
-import { parseCHUA } from "../../../lib/parse-ch-ua";
-import { type } from "../../../lib/type";
-import { cacheHit } from "../../../lib/cacheHit";
-import type { CacheStatus } from "../../../lib/cacheHit";
-import type { Env } from "./env";
-
-let count = 0;
+import { appName } from "../../../../lib/appName";
+import { discord } from "../../../../lib/discord";
+import { isDataCentreAutonomousSystem } from "../../../../lib/isDataCentreAutonomousSystem";
+import { locationDeails } from "../../../../lib/locationDetails";
+import { log } from "../../../../lib/log";
+import { parseCHUA } from "../../../../lib/parse-ch-ua";
+import { type } from "../../../../lib/type";
+import { cacheHit } from "../../../../lib/cacheHit";
+import type { CacheStatus } from "../../../../lib/cacheHit";
+import type { Env } from "../interfaces";
 
 const handler: ExportedHandler = {
 	async fetch(
@@ -27,12 +25,12 @@ const handler: ExportedHandler = {
 
 		try {
 			const url = new URL(request.url);
-			const uuid = uuidv4();
+			const requestID = uuidv4();
 
 			const originalResponse = await fetch(request, {
 				headers: new Headers([
 					...Array.from(request.headers),
-					["X-Request-Id", uuid],
+					["X-Request-Id", requestID],
 				]),
 				cf: {
 					cacheTtl: 600,
@@ -95,32 +93,49 @@ const handler: ExportedHandler = {
 			}
 			const { status } = originalResponse;
 			const location = [city, country, continent].filter(Boolean).join(", ");
+			const duration = Date.now() - start;
 
-			ctx.waitUntil(
-				log(
-					"traffic",
-					{
-						level: "info",
+			env.SEND_LOGS &&
+				ctx.waitUntil(
+					log(
+						"traffic",
+						{
+							level: "info",
+							app,
+							app_version: appVersion,
+							message: `${status} "${url.href}" from ${location}`,
+							duration,
+							request: [request.method, url.href].join(" "),
+							location,
+							ip,
+							as: [asOrg, asn].filter(Boolean).join(", "),
+							automated:
+								isDataCentreAutonomousSystem(asOrg) || isbot(userAgent),
+							status,
+							content_type: contentType,
+							cache_status: cacheStatus,
+							browser: parseCHUA(request.headers.get("sec-ch-ua")) || userAgent,
+							referrer: request.headers.get("referer"),
+							request_id: requestID,
+						},
+						env.LOGZIO_TOKEN
+					)
+				);
+
+			env.SEND_ANALYTICS &&
+				env.TRAFFIC_ANALYTICS.writeDataPoint({
+					blobs: [
 						app,
-						app_version: appVersion,
-						message: `${status} "${url.href}" from ${location}`,
-						duration: Date.now() - start,
-						request: [request.method, url.href].join(" "),
-						location,
-						ip,
-						as: [asOrg, asn].filter(Boolean).join(", "),
-						automated: isDataCentreAutonomousSystem(asOrg) || isbot(userAgent),
-						status,
-						content_type: contentType,
-						cache_status: cacheStatus,
-						browser: parseCHUA(request.headers.get("sec-ch-ua")) || userAgent,
-						referrer: request.headers.get("referer"),
-						request_id: uuid,
-						logger: env.VERSION,
-					},
-					env.LOGZIO_TOKEN
-				)
-			);
+						appVersion,
+						request.method,
+						url.href,
+						contentType,
+						cacheStatus,
+					],
+					doubles: [status, duration],
+					indexes: [requestID.replace(/-/g, "")],
+				});
+
 			return mutableResponse;
 		} catch (error) {
 			const { message, stack } = error as Error;
