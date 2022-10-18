@@ -1,5 +1,5 @@
 name = "traffic-logger-local"
-main = "src/index.ts"
+main = "src/app/index.ts"
 compatibility_date = "2022-07-22"
 
 [env.gateway]
@@ -17,8 +17,15 @@ kv_namespaces = [
 [env.canary]
 name = "traffic-logger-canary"
 
+[[env.canary.unsafe.bindings]]
+type = "analytics_engine"
+name = "TRAFFIC_ANALYTICS"
+dataset = "TRAFFIC_ANALYTICS"
+
 [env.canary.vars]
 VARIATION = "canary"
+SEND_ANALYTICS = true
+SEND_LOGS = true
 
 [env.main]
 name = "traffic-logger-main"
@@ -26,5 +33,12 @@ routes = [
 	{ pattern = "*danisilas.com/*", zone_id = "d9470a8d1d50c3187550f48efa23e92f" }
 ]
 
+[[env.canary.unsafe.bindings]]
+type = "analytics_engine"
+name = "TRAFFIC_ANALYTICS"
+dataset = "TRAFFIC_ANALYTICS"
+
 [env.main.vars]
 VARIATION = "main"
+SEND_ANALYTICS = false
+SEND_LOGS = true

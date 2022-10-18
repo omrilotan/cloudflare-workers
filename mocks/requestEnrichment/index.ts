@@ -6,9 +6,11 @@ export const requestEnrichment = {
 					asn: 395747,
 					asOrganization: "Google Cloud",
 					botManagement: {
+						corporateProxy: false,
+						ja3Hash: "",
 						score: 0,
-						verifiedBot: false,
 						staticResource: false,
+						verifiedBot: false,
 					},
 					clientAcceptEncoding: "gzip, deflate, br",
 					clientTcpRtt: 0,

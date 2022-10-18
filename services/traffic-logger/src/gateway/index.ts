@@ -12,11 +12,24 @@ const handler: ExportedHandler = {
 	): Promise<Response> {
 		ctx.passThroughOnException();
 
-		const valueFromKV = await env.ROLLOUT.get("traffic-logger-canary");
-		const percentage = Number(valueFromKV) || 0;
-		const service = percentage > Math.random() * 100 ? env.CANARY : env.MAIN;
+		const inCanary = await inRollout(request, env);
+		const service = inCanary ? env.CANARY : env.MAIN;
+
 		return service.fetch(request);
 	},
 };
+
+/**
+ * Determine if the request should be routed to the canary service.
+ */
+async function inRollout(request: Request, env: Env): Promise<boolean> {
+	if (request.headers.get("force-rollout") === "true") {
+		return true;
+	}
+	const valueFromKV = await env.ROLLOUT.get("traffic-logger-canary");
+	const rollout = Number(valueFromKV) || 0;
+	const percent = Math.random() * 100;
+	return rollout > percent;
+}
 
 export default handler;
