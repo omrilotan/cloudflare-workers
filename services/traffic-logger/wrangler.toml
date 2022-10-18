@@ -13,6 +13,8 @@ services = [
 kv_namespaces = [
 	{ binding = "ROLLOUT", id = "309b38e6127b48eb86ff9a58e715ac15" }
 ]
+ROLLOUT_KEY = "traffic-logger-canary"
+ROLLOUT_HEADER = "force-rollout"
 
 [env.canary]
 name = "traffic-logger-canary"

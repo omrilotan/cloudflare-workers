@@ -25,6 +25,70 @@ const UID_PATTERN =
 	/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
 const INDEX_PATTERN = /[0-9a-f]{32}/;
 
+describe("gateway", () => {
+	const env = {
+		MAIN: {
+			fetch: jest.fn(
+				async (request: Request): Promise<Response> => new Response("ok")
+			),
+		},
+		CANARY: {
+			fetch: jest.fn(
+				async (request: Request): Promise<Response> =>
+					new Response("Server Error", { status: 500 })
+			),
+		},
+		ROLLOUT: { get: jest.fn((key: string): string => "0") },
+		ROLLOUT_KEY: "rollout-key",
+		ROLLOUT_HEADER: "rollout-header",
+	};
+	beforeAll(async () => {
+		worker = (await import("./src/gateway")).default;
+	});
+	afterEach(() => jest.clearAllMocks());
+	afterAll(() => jest.restoreAllMocks());
+	test("default : main", async () => {
+		const request = new Request("https://example.com");
+		const response = await worker.fetch(request, env, ctx);
+		expect(env.MAIN.fetch).toHaveBeenCalled();
+		expect(env.CANARY.fetch).not.toHaveBeenCalled();
+		expect(response.status).toBe(200);
+	});
+	test("rollout is on 100 : main", async () => {
+		const request = new Request("https://example.com");
+		(env.ROLLOUT.get as jest.Mock).mockImplementationOnce(() => "100");
+		const response = await worker.fetch(request, env, ctx);
+		expect(env.MAIN.fetch).not.toHaveBeenCalled();
+		expect(env.CANARY.fetch).toHaveBeenCalled();
+		expect(response.status).toBe(500);
+	});
+	test("rollout is on 50 : either", async () => {
+		await Promise.all(
+			Array.from({ length: 50 }).map(() => {
+				const request = new Request("https://example.com");
+				(env.ROLLOUT.get as jest.Mock).mockImplementationOnce(() => "50");
+				return worker.fetch(request, env, ctx);
+			})
+		);
+		const mainCalls = env.MAIN.fetch.mock.calls.length;
+		const canaryCalls = env.CANARY.fetch.mock.calls.length;
+		expect(mainCalls).toBeGreaterThan(0);
+		expect(canaryCalls).toBeGreaterThan(0);
+		expect(mainCalls + canaryCalls).toBe(50);
+	});
+	test("custom header : canary", async () => {
+		const request = new Request("https://example.com", {
+			headers: {
+				[env.ROLLOUT_HEADER]: "true",
+			},
+		});
+		const response = await worker.fetch(request, env, ctx);
+		expect(env.MAIN.fetch).not.toHaveBeenCalled();
+		expect(env.CANARY.fetch).toHaveBeenCalled();
+		expect(response.status).toBe(500);
+	});
+});
+
 describe("traffic-logger", (): void => {
 	beforeAll(async (): Promise<void> => {
 		requestEnrichment.mount();
@@ -38,7 +102,7 @@ describe("traffic-logger", (): void => {
 	});
 	afterEach(async (): Promise<void> => {
 		await fetchMock.drain();
-		jest.resetAllMocks();
+		jest.clearAllMocks();
 	});
 	afterAll(async (): Promise<void> => {
 		requestEnrichment.unmount();
