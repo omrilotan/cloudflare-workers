@@ -103,14 +103,17 @@ const handler: ExportedHandler = {
 				if (!response.ok) {
 					throw new Error(`Sendgrid responded with ${response.status}`);
 				}
+				const message =
+					rest.message || rest.subject || `Email sent to ${recipient}`;
 				ctx.waitUntil(
 					log(
 						"email",
 						{
 							level: "info",
 							app,
-							message: `Email sent to ${recipient}`,
-							details: content,
+							message,
+							recipient,
+							content,
 							browser:
 								parseCHUA(request.headers.get("sec-ch-ua")) ||
 								request.headers.get("user-agent"),
