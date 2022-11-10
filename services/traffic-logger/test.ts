@@ -2,20 +2,8 @@ import { CacheStatus } from "../../lib/cacheHit";
 import { MockExecutionContext } from "../../mocks/executionContext";
 import { fetchMock } from "../../mocks/fetchMock";
 import { requestEnrichment } from "../../mocks/requestEnrichment";
-import type { DataPoint, Env } from "./src/interfaces";
-
-const env: Env = {
-	DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1234567890/1234567890",
-	LOGZIO_TOKEN: "xmC8duHhUaqqYoBWbMgGq1g6jxUJwtPG",
-	VERSION: "a3b445d",
-	RELEASE: "2022-10-11",
-	SEND_ANALYTICS: true,
-	SEND_LOGS: true,
-	VARIATION: "test",
-	TRAFFIC_ANALYTICS: {
-		writeDataPoint: jest.fn(),
-	},
-};
+import type { Env as AppEnv } from "./src/interfaces";
+import type { Env as GatewayEnv } from "./src/gateway/index";
 
 const log = jest.fn();
 const discord = jest.fn();
@@ -26,7 +14,7 @@ const UID_PATTERN =
 const INDEX_PATTERN = /[0-9a-f]{32}/;
 
 describe("gateway", () => {
-	const env = {
+	const env: GatewayEnv = {
 		MAIN: {
 			fetch: jest.fn(
 				async (request: Request): Promise<Response> => new Response("ok")
@@ -38,7 +26,9 @@ describe("gateway", () => {
 					new Response("Server Error", { status: 500 })
 			),
 		},
-		ROLLOUT: { get: jest.fn((key: string): string => "0") },
+		ROLLOUT: {
+			get: jest.fn((key: string): string => "0"),
+		} as unknown as KVNamespace,
 		ROLLOUT_KEY: "rollout-key",
 		ROLLOUT_HEADER: "rollout-header",
 	};
@@ -70,8 +60,8 @@ describe("gateway", () => {
 				return worker.fetch(request, env, ctx);
 			})
 		);
-		const mainCalls = env.MAIN.fetch.mock.calls.length;
-		const canaryCalls = env.CANARY.fetch.mock.calls.length;
+		const mainCalls = (env.MAIN.fetch as jest.Mock).mock.calls.length;
+		const canaryCalls = (env.CANARY.fetch as jest.Mock).mock.calls.length;
 		expect(mainCalls).toBeGreaterThan(0);
 		expect(canaryCalls).toBeGreaterThan(0);
 		expect(mainCalls + canaryCalls).toBe(50);
@@ -90,6 +80,18 @@ describe("gateway", () => {
 });
 
 describe("traffic-logger", (): void => {
+	const env: AppEnv = {
+		DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1234567890/1234567890",
+		LOGZIO_TOKEN: "xmC8duHhUaqqYoBWbMgGq1g6jxUJwtPG",
+		VERSION: "a3b445d",
+		RELEASE: "2022-10-11",
+		SEND_ANALYTICS: true,
+		SEND_LOGS: true,
+		VARIATION: "test",
+		TRAFFIC_ANALYTICS: {
+			writeDataPoint: jest.fn(),
+		},
+	};
 	beforeAll(async (): Promise<void> => {
 		requestEnrichment.mount();
 		await fetchMock.mount();
@@ -98,7 +100,11 @@ describe("traffic-logger", (): void => {
 		);
 		jest.mock("../../lib/log", () => ({ log }));
 		jest.mock("../../lib/discord", () => ({ discord }));
-		worker = (await import("./src/app")).default;
+		try {
+			worker = (await import("./src/app")).default;
+		} catch (e) {
+			console.error(e);
+		}
 	});
 	afterEach(async (): Promise<void> => {
 		await fetchMock.drain();

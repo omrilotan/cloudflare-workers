@@ -25,7 +25,8 @@ const handler: ExportedHandler = {
 
 		try {
 			const url = new URL(request.url);
-			const requestID = uuidv4();
+			const requestID =
+				request.headers.get("cloudflare-request-id") || uuidv4();
 
 			const originalResponse = await fetch(request, {
 				headers: new Headers([
