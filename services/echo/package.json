@@ -1,0 +1,11 @@
+{
+  "name": "echo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev src/index.ts",
+    "start-local": "wrangler dev src/index.ts --local true",
+    "deploy": "wrangler publish",
+    "tail": "wrangler tail"
+  }
+}
