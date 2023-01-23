@@ -41,7 +41,7 @@ routes = [
 	{ pattern = "*danisilas.com/*", zone_id = "d9470a8d1d50c3187550f48efa23e92f" }
 ]
 
-[[env.canary.unsafe.bindings]]
+[[env.main.unsafe.bindings]]
 type = "analytics_engine"
 name = "TRAFFIC_ANALYTICS"
 dataset = "TRAFFIC_ANALYTICS"
