@@ -1,0 +1,11 @@
+{
+  "name": "tv",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "predeploy": "../../scripts/secrets.sh verify TV_HOST TV_PORT",
+    "deploy": "wrangler publish",
+    "postdeploy": "../../scripts/secrets.sh push TV_HOST TV_PORT",
+    "tail": "wrangler tail"
+  }
+}
