@@ -195,7 +195,7 @@ describe("traffic-logger", (): void => {
 			expect(response.status).toBe(200);
 			expect(response.headers.get("server-timing")).toMatch(
 				new RegExp(
-					`CDN-Origin-Fetch; dur=\\d+; desc="origin rtt",\\s*Cache-Status; dur=[01]; desc="${cacheStatus}"`
+					`CDN-Origin-Fetch; dur=\\d+; desc="[\\da-f]{7}",\\s*Cache-Status; dur=[01]; desc="${cacheStatus}"`
 				)
 			);
 			response.headers.delete("server-timing");
