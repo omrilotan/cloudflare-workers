@@ -6,11 +6,9 @@ compatibility_date = "2022-07-22"
 name = "traffic-logger-gateway"
 main = "src/gateway/index.ts"
 routes = [
-	"ci-cd.net",
-	"do.omrilotan.com/*",
-	"goto.omrilotan.com/*",
-	"omrilotan.com",
-	"omrilotan.com/*"
+	{ pattern = "omrilotan.com/*", zone_name = "omrilotan.com" },
+	{ pattern = "briefly.omrilotan.com/*", zone_name = "omrilotan.com" },
+	{ pattern = "do.omrilotan.com/*", zone_name = "omrilotan.com" }
 ]
 services = [
 	{ binding = "MAIN", service = "traffic-logger-main", environment = "production" },
@@ -38,7 +36,8 @@ SEND_LOGS = true
 [env.main]
 name = "traffic-logger-main"
 routes = [
-	{ pattern = "*danisilas.com/*", zone_id = "d9470a8d1d50c3187550f48efa23e92f" }
+	{ pattern = "*ci-cd.net/*", zone_name = "ci-cd.net" },
+	{ pattern = "*danisilas.com/*", zone_name = "danisilas.com" }
 ]
 
 [[env.main.unsafe.bindings]]
