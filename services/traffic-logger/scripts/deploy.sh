@@ -2,6 +2,8 @@
 
 branch=$(git rev-parse --abbrev-ref HEAD)
 
+npm_config_yes=true npm create wrangler
+
 echo "Deploy canary"
 ../../scripts/secrets.sh verify DISCORD_WEBHOOK LOGZIO_TOKEN -- --env canary
 wrangler publish --env canary

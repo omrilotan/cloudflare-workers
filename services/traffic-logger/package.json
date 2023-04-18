@@ -2,6 +2,7 @@
   "name": "traffic-logger",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "start": "wrangler dev src/index.ts --local true --host omrilotan.com",
     "deploy": "./scripts/deploy.sh",
