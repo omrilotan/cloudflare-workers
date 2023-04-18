@@ -13,7 +13,9 @@ const handler: ExportedHandler = {
 		url.protocol = "http";
 		url.host = env.TV_HOST;
 		url.port = env.TV_PORT;
-		return fetch(url.toString(), request);
+		const req = new Request(url.toString(), request);
+		req.headers.set("host", env.TV_HOST);
+		return fetch(url.toString(), req);
 	},
 };
 
