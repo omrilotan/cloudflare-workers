@@ -22,7 +22,7 @@ const dataCentreAutonomousSystemList = new Set<string>([
 
 const dataCentreAutonomousSystemPattern = new RegExp(
 	["cloud", "data", "host", "server"].join("|"),
-	"i"
+	"i",
 );
 
 export const isDataCentreAutonomousSystem = (as: string): boolean =>

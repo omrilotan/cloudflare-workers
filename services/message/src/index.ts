@@ -14,7 +14,7 @@ const handler: ExportedHandler = {
 	async fetch(
 		request: Request,
 		env: Env,
-		ctx: ExecutionContext
+		ctx: ExecutionContext,
 	): Promise<Response> {
 		const url = new URL(request.url);
 		const app = appName(url);
@@ -120,8 +120,8 @@ const handler: ExportedHandler = {
 							location,
 							ip,
 						},
-						env.LOGZIO_TOKEN
-					)
+						env.LOGZIO_TOKEN,
+					),
 				);
 			} catch (error) {
 				ctx.waitUntil(
@@ -135,13 +135,13 @@ const handler: ExportedHandler = {
 								stack: error.stack,
 								status: error.status,
 							},
-							env.LOGZIO_TOKEN
+							env.LOGZIO_TOKEN,
 						),
 						discord(
 							`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
-							env.DISCORD_WEBHOOK
+							env.DISCORD_WEBHOOK,
 						),
-					])
+					]),
 				);
 			}
 
@@ -161,14 +161,14 @@ const handler: ExportedHandler = {
 						stack: error.stack,
 						status: error.status,
 					},
-					env.SENDGRID_TOKEN
-				)
+					env.SENDGRID_TOKEN,
+				),
 			);
 			ctx.waitUntil(
 				discord(
 					`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
-					env.DISCORD_WEBHOOK
-				)
+					env.DISCORD_WEBHOOK,
+				),
 			);
 			return new Response(error?.message, {
 				status: 500,

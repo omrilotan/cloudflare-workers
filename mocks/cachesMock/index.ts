@@ -16,13 +16,13 @@ class CacheMock implements Cache {
 	}
 	async matchAll(
 		request: RequestInit,
-		options?: CacheQueryOptions
+		options?: CacheQueryOptions,
 	): Promise<Response[]> {
 		throw new Error("Method not implemented by Cloudflare.");
 	}
 	async match(
 		request: Request,
-		options?: CacheQueryOptions
+		options?: CacheQueryOptions,
 	): Promise<Response> {
 		if (CacheMock.map.has(request.url)) {
 			return CacheMock.map.get(request.url);
@@ -34,7 +34,7 @@ class CacheMock implements Cache {
 	}
 	async delete(
 		request: Request,
-		options?: CacheQueryOptions
+		options?: CacheQueryOptions,
 	): Promise<boolean> {
 		if (CacheMock.map.has(request.url)) {
 			CacheMock.map.delete(request.url);

@@ -12,7 +12,7 @@ export function parseCHUA(header: string): string | undefined {
 				} catch (e) {
 					return i;
 				}
-			})
+			}),
 		)
 		.filter(([k]) => !k.includes("Brand"));
 

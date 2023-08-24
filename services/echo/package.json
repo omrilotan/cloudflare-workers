@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "wrangler dev src/index.ts",
-    "start-local": "wrangler dev src/index.ts --local true",
-    "deploy": "wrangler publish",
+    "start-local": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy",
     "tail": "wrangler tail"
   }
 }

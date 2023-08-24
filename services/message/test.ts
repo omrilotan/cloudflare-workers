@@ -25,7 +25,7 @@ describe("services/message", () => {
 		requestEnrichment.mount();
 		await fetchMock.mount();
 		(globalThis.fetch as jest.Mock).mockImplementation(
-			async () => new Response("Ok", { status: 200 })
+			async () => new Response("Ok", { status: 200 }),
 		);
 		jest.mock("../../lib/log", () => ({ log }));
 		worker = (await import("./src")).default;
@@ -57,12 +57,12 @@ describe("services/message", () => {
 
 			const payload = JSON.parse(options.body);
 			expect(payload.personalizations[0].to[0].email).toBe(
-				"username@domain.com"
+				"username@domain.com",
 			);
 			expect(payload.from.email).toBe("authorised.with.sendgrid@domain.net");
 			expect(payload.subject).toBe("Received email from www.website.com");
 			expect(payload.content[0].value).toMatch(
-				/^from: Shmuel\ncontact: 07873670381/
+				/^from: Shmuel\ncontact: 07873670381/,
 			);
 
 			expect(response.status).toBe(200);
@@ -80,7 +80,7 @@ describe("services/message", () => {
 						from,
 						contact,
 					}),
-				}
+				},
 			);
 			await worker.fetch(request, env, ctx);
 
@@ -89,19 +89,19 @@ describe("services/message", () => {
 
 			const payload = JSON.parse(options.body);
 			expect(payload.personalizations[0].to[0].email).toBe(
-				"username@domain.com"
+				"username@domain.com",
 			);
 			expect(payload.from.email).toBe("authorised.with.sendgrid@domain.net");
 			expect(payload.subject).toBe("Received email");
 			expect(payload.content[0].value).toMatch(
-				/^from: Shmuel\ncontact: 07873670381/
+				/^from: Shmuel\ncontact: 07873670381/,
 			);
 		});
 	});
 	describe("errors", () => {
 		test("Got an error from SendGrid", async () => {
 			(globalThis.fetch as jest.Mock).mockImplementationOnce(
-				async (request) => new Response("Error sending email", { status: 500 })
+				async (request) => new Response("Error sending email", { status: 500 }),
 			);
 			const request = new Request("http://localhost:8080", {
 				method: "POST",

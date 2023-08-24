@@ -4,6 +4,7 @@ import { fetchMock } from "../../mocks/fetchMock";
 import { requestEnrichment } from "../../mocks/requestEnrichment";
 import type { Env as AppEnv } from "./src/interfaces";
 import type { Env as GatewayEnv } from "./src/gateway/index";
+import { Fetcher } from "@cloudflare/workers-types/experimental";
 
 const log = jest.fn();
 const discord = jest.fn();
@@ -17,14 +18,16 @@ describe("gateway", () => {
 	const env: GatewayEnv = {
 		MAIN: {
 			fetch: jest.fn(
-				async (request: Request): Promise<Response> => new Response("ok")
+				async (request: Request): Promise<Response> => new Response("ok"),
 			),
+			connect: jest.fn(),
 		},
 		CANARY: {
 			fetch: jest.fn(
 				async (request: Request): Promise<Response> =>
-					new Response("Server Error", { status: 500 })
+					new Response("Server Error", { status: 500 }),
 			),
+			connect: jest.fn(),
 		},
 		ROLLOUT: {
 			get: jest.fn((key: string): string => "0"),
@@ -58,7 +61,7 @@ describe("gateway", () => {
 				const request = new Request("https://example.com");
 				(env.ROLLOUT.get as jest.Mock).mockImplementationOnce(() => "50");
 				return worker.fetch(request, env, ctx);
-			})
+			}),
 		);
 		const mainCalls = (env.MAIN.fetch as jest.Mock).mock.calls.length;
 		const canaryCalls = (env.CANARY.fetch as jest.Mock).mock.calls.length;
@@ -96,7 +99,7 @@ describe("traffic-logger", (): void => {
 		requestEnrichment.mount();
 		await fetchMock.mount();
 		(globalThis.fetch as jest.Mock).mockImplementation(
-			async (): Promise<Response> => new Response("Ok", { status: 200 })
+			async (): Promise<Response> => new Response("Ok", { status: 200 }),
 		);
 		jest.mock("../../lib/log", () => ({ log }));
 		jest.mock("../../lib/discord", () => ({ discord }));
@@ -138,7 +141,7 @@ describe("traffic-logger", (): void => {
 			url: string,
 			cacheStatus: CacheStatus,
 			contentType: string,
-			shouldLog: boolean
+			shouldLog: boolean,
 		): Promise<void> => {
 			(globalThis.fetch as jest.Mock).mockImplementationOnce(
 				async () =>
@@ -150,7 +153,7 @@ describe("traffic-logger", (): void => {
 							["ETag", "u6LbP7BGEntOvnXR3SchEDg7KX2WW72Q"],
 							["X-Powered-By", "Fiber"],
 						]),
-					})
+					}),
 			);
 			const request = new Request(url, {
 				method: "GET",
@@ -195,11 +198,11 @@ describe("traffic-logger", (): void => {
 			expect(response.status).toBe(200);
 			expect(response.headers.get("server-timing")).toMatch(
 				new RegExp(
-					`CDN-Origin-Fetch; dur=\\d+; desc="[\\da-f]{7}",\\s*Cache-Status; dur=[01]; desc="${cacheStatus}"`
-				)
+					`CDN-Origin-Fetch; dur=\\d+; desc="[\\da-f]{7}",\\s*Cache-Status; dur=[01]; desc="${cacheStatus}"`,
+				),
 			);
 			response.headers.delete("server-timing");
 			expect(Array.from(response.headers)).toMatchSnapshot();
-		}
+		},
 	);
 });

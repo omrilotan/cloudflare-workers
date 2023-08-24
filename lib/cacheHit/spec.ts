@@ -6,7 +6,7 @@ describe("lib/cacheHit", () => {
 		"%s is considered cache hit",
 		(status) => {
 			expect(cacheHit(status as CacheStatus)).toBe(1);
-		}
+		},
 	);
 	test.each([
 		"BYPASS",

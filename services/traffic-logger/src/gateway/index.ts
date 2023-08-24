@@ -10,7 +10,7 @@ const handler: ExportedHandler = {
 	async fetch(
 		request: Request,
 		env: Env,
-		ctx: ExecutionContext
+		ctx: ExecutionContext,
 	): Promise<Response> {
 		ctx.passThroughOnException();
 

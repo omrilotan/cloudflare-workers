@@ -40,7 +40,7 @@ export const fetchMock = {
 					await cache.put(request, response);
 				}
 				return response;
-			}
+			},
 		);
 	},
 

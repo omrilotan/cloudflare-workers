@@ -26,7 +26,7 @@ fetch("https://message.website.com/", {
 	}),
 })
 	.then((response) =>
-		response.ok ? showSuccess() : showError(response.statusText)
+		response.ok ? showSuccess() : showError(response.statusText),
 	)
 	.catch((error) => {
 		showError(error.message);

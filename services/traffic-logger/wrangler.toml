@@ -1,4 +1,4 @@
-name = 'traffic-logger'
+name = 'traffic-logger-local'
 main = 'src/app/index.ts'
 compatibility_date = '2022-07-22'
 

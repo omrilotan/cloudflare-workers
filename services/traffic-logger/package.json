@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "wrangler dev src/index.ts --local true --host omrilotan.com",
+    "start": "wrangler dev src/local/index.ts --host omrilotan.com",
     "deploy": "./scripts/deploy.sh",
     "tail": "wrangler tail",
     "rollout": "wrangler kv:key put --namespace-id 309b38e6127b48eb86ff9a58e715ac15 \"traffic-logger-canary\""

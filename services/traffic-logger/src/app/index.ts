@@ -15,7 +15,7 @@ const handler: ExportedHandler = {
 	async fetch(
 		request: Request,
 		env: Env,
-		ctx: ExecutionContext
+		ctx: ExecutionContext,
 	): Promise<Response> {
 		ctx.passThroughOnException();
 		const start = Date.now();
@@ -40,11 +40,11 @@ const handler: ExportedHandler = {
 				},
 			});
 			const cacheStatus = originalResponse.headers.get(
-				"cf-cache-status"
+				"cf-cache-status",
 			) as CacheStatus;
 			const mutableResponse = new Response(
 				originalResponse.body,
-				originalResponse
+				originalResponse,
 			);
 
 			// Replace headers
@@ -82,7 +82,7 @@ const handler: ExportedHandler = {
 			].forEach(([name, value]) => mutableResponse.headers.append(name, value));
 
 			["alt-svc", "etag", "via", "x-github-request-id", "x-powered-by"].forEach(
-				(header) => mutableResponse.headers.delete(header)
+				(header) => mutableResponse.headers.delete(header),
 			);
 			const userAgent = request.headers.get("user-agent");
 			const { continent, country, city, ip, asOrg, asn } =
@@ -119,8 +119,8 @@ const handler: ExportedHandler = {
 							referrer: request.headers.get("referer"),
 							request_id: requestID,
 						},
-						env.LOGZIO_TOKEN
-					)
+						env.LOGZIO_TOKEN,
+					),
 				);
 
 			env.SEND_ANALYTICS &&
@@ -153,14 +153,14 @@ const handler: ExportedHandler = {
 						error: message,
 						stack,
 					},
-					env.LOGZIO_TOKEN
-				)
+					env.LOGZIO_TOKEN,
+				),
 			);
 			ctx.waitUntil(
 				discord(
 					`Error fetching "${request.url}"\n\`\`\`\n${message}\n\`\`\``,
-					env.DISCORD_WEBHOOK
-				)
+					env.DISCORD_WEBHOOK,
+				),
 			);
 			throw error;
 		}

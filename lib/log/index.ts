@@ -7,7 +7,7 @@ interface Record {
 export async function log(
 	type: string,
 	record: Record,
-	token: string
+	token: string,
 ): Promise<Response> {
 	if (typeof record !== "object") {
 		throw new TypeError("record must be an object");
@@ -25,7 +25,7 @@ export async function log(
 				["Accept", "*/*"],
 			]),
 			body: JSON.stringify(record),
-		}
+		},
 	);
 
 	if (!response.ok) {

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "predeploy": "../../scripts/secrets.sh verify TV_HOST TV_PORT",
-    "deploy": "wrangler publish",
+    "deploy": "wrangler deploy",
     "postdeploy": "../../scripts/secrets.sh push TV_HOST TV_PORT",
     "tail": "wrangler tail"
   }

@@ -11,6 +11,7 @@ export const requestEnrichment = {
 						score: 0,
 						staticResource: false,
 						verifiedBot: false,
+						detectionIds: [],
 					},
 					city: "Austin",
 					clientAcceptEncoding: "gzip, deflate, br",

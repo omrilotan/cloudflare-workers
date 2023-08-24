@@ -30,7 +30,7 @@ export interface DataPoint {
 		method: string,
 		url: string,
 		content_type: string,
-		cache_status: string
+		cache_status: string,
 	];
 	doubles: [status: number, duration: number];
 	indexes: [request_id: string];

@@ -12,7 +12,7 @@ function displayEntries(entries: [string, string][], indentation = 1): string {
 							? `\n${displayEntries(Object.entries(value), indentation + 1)}`
 							: value
 				  }`
-				: ""
+				: "",
 		)
 		.filter(Boolean)
 		.join("\n");
@@ -22,7 +22,7 @@ const handler: ExportedHandler = {
 	async fetch(
 		request: Request,
 		env: Env,
-		ctx: ExecutionContext
+		ctx: ExecutionContext,
 	): Promise<Response> {
 		ctx.passThroughOnException();
 
