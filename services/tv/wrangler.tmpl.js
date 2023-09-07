@@ -6,5 +6,5 @@ export const template = ({ Section }) => ({
 	vars: Section({
 		TV_HOST: process.env.TV_HOST,
 		TV_PORT: process.env.TV_PORT,
-	})
+	}),
 });

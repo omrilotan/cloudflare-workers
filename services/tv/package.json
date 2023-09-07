@@ -2,6 +2,7 @@
   "name": "tv",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "npm create wrangler --input ./wrangler.tmpl.js --output ./wrangler.toml",
     "prestart": "npm run build",
