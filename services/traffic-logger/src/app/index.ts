@@ -73,7 +73,9 @@ const handler: ExportedHandler = {
 				["App-Version", appVersion],
 				[
 					"Server-Timing",
-					`CDN-Origin-Fetch; dur=${Date.now() - start}; desc="${env.VERSION}"`,
+					`CDN-Origin-Fetch; dur=${Date.now() - start}; desc="${env.RELEASE}:${
+						env.VERSION
+					}"`,
 				],
 				[
 					"Server-Timing",
