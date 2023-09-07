@@ -1,16 +1,18 @@
+import { Buffer } from 'node:buffer';
+
 type Env = {};
 
 /**
  * Display a list of entries in HTML
  */
-function displayEntries(entries: [string, string][], indentation = 1): string {
+function displayEntries(entries: [string, any][], indentation = 1): string {
 	return entries
-		.map(([key, value]) =>
+		.map(([key, value]: [string, any]): string =>
 			value
 				? `${Array.from({ length: indentation }).join("\t")}<b>${key}</b>: ${
 						typeof value === "object"
 							? `\n${displayEntries(Object.entries(value), indentation + 1)}`
-							: value
+							: `${value}`
 				  }`
 				: "",
 		)
@@ -46,7 +48,7 @@ const handler: ExportedHandler = {
 	</body>
 </html>`;
 
-		return new Response(content, {
+		return new Response(Buffer.from(content), {
 			status: 200,
 			headers: new Headers([["Content-Type", "text/html"]]),
 		});

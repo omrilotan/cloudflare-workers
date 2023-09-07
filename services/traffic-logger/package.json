@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "npm create wrangler --input ./wrangler.tmpl.js --output ./wrangler.toml",
+    "prestart": "npm run build",
     "start": "wrangler dev src/local/index.ts --host omrilotan.com",
+    "predeploy": "npm run build",
     "deploy": "./scripts/deploy.sh",
     "tail": "wrangler tail",
     "rollout": "wrangler kv:key put --namespace-id 309b38e6127b48eb86ff9a58e715ac15 \"traffic-logger-canary\""

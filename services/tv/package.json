@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "predeploy": "../../scripts/secrets.sh verify TV_HOST TV_PORT",
+    "build": "npm create wrangler --input ./wrangler.tmpl.js --output ./wrangler.toml",
+    "prestart": "npm run build",
+    "start": "wrangler dev src/index.ts --host tv.omrilotan.com",
+    "predeploy": "../../scripts/secrets.sh verify TV_HOST TV_PORT && npm run build",
     "deploy": "wrangler deploy",
-    "postdeploy": "../../scripts/secrets.sh push TV_HOST TV_PORT",
+    "postdeploy": "../../scripts/secrets.sh push",
     "tail": "wrangler tail"
   }
 }

@@ -1,1 +1,4 @@
 node_modules
+
+services/traffic-logger/wrangler.toml
+services/tv/wrangler.toml

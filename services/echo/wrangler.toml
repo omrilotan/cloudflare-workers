@@ -1,3 +1,4 @@
 name = "echo"
 main = "src/index.ts"
 compatibility_date = "2022-07-22"
+compatibility_flags = [ "nodejs_compat" ]
