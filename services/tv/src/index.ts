@@ -12,7 +12,7 @@ const handler: ExportedHandler = {
 		const url = new URL(request.url);
 		url.host = env.TV_HOST;
 		url.port = env.TV_PORT;
-		url.protocol = url.port === "443" ? "https" : "http";
+		url.protocol = env.TV_PORT === "443" ? "https" : "http";
 		const req = new Request(url.toString(), request);
 		req.headers.set("host", env.TV_HOST);
 		return fetch(url.toString(), req);

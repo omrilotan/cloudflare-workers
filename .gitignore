@@ -1,4 +1,10 @@
 node_modules
+dist
+.wrangler
+.parcel-cache
+yarn.lock
 
+services/llama/wrangler.toml
 services/traffic-logger/wrangler.toml
 services/tv/wrangler.toml
+
