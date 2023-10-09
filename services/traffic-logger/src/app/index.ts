@@ -120,11 +120,15 @@ const handler: ExportedHandler = {
 							browser: parseCHUA(request.headers.get("sec-ch-ua")) || userAgent,
 							referrer: request.headers.get("referer"),
 							request_id: requestID,
-							details: Object.entries({
-								purpose: request.headers.get("purpose"),
-							})
-								.map((pair: [string, string | null]): string => pair.join(": "))
-								.join(", "),
+							details:
+								Object.entries({
+									purpose: request.headers.get("purpose"),
+								})
+									.filter(([, value]) => value !== null)
+									.map((pair: [string, string | null]): string =>
+										pair.join(": "),
+									)
+									.join(", ") || undefined,
 						},
 						env.LOGZIO_TOKEN,
 					),
