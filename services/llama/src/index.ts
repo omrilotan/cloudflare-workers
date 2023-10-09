@@ -24,9 +24,7 @@ export default {
 					status: 101,
 					webSocket: client,
 					headers: {
-						"server-timing": `worker;dur=${
-							Date.now() - start
-						};desc="Llama WS"`,
+						"server-timing": `worker;dur=${Date.now() - start};desc="Llama WS"`,
 					},
 				});
 			}

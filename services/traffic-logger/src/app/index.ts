@@ -122,9 +122,9 @@ const handler: ExportedHandler = {
 							request_id: requestID,
 							details: Object.entries({
 								purpose: request.headers.get("purpose"),
-							}).map(
-								(pair: [string, string | null]): string => pair.join(": "),
-							).join(", "),
+							})
+								.map((pair: [string, string | null]): string => pair.join(": "))
+								.join(", "),
 						},
 						env.LOGZIO_TOKEN,
 					),
