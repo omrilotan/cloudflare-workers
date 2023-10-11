@@ -17,7 +17,7 @@ export function locationDeails(request: Request): LocationDetails {
 		city,
 		asOrganization: asOrg,
 		asn,
-	} = request.cf as IncomingRequestCfProperties as any;
+	} = (request as any).cf as IncomingRequestCfProperties as any;
 
 	return Object.defineProperties({} as LocationDetails, {
 		continent: {

@@ -34,8 +34,8 @@ describe("objectToKVString", () => {
 				key2: [1, 2, 3],
 				key3: new Date(1697025003622),
 			}),
-		).toEqual(
-			"key1: [object Object], key2: 1,2,3, key3: Wed Oct 11 2023 12:50:03 GMT+0100 (British Summer Time)",
+		).toMatch(
+			/^key1: \[object Object\], key2: 1,2,3, key3: \w{3} \w{3} \d{1,2} \d{4} \d{2}:\d{2}:\d{2} GMT\+\d{4} \([\w\s]+\)/,
 		);
 	});
 	test("Handles input object with keys that have nested objects", () => {
