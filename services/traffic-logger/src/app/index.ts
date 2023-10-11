@@ -8,6 +8,8 @@ import { log } from "../../../../lib/log";
 import { parseCHUA } from "../../../../lib/parse-ch-ua";
 import { type } from "../../../../lib/type";
 import { cacheHit } from "../../../../lib/cacheHit";
+import { isPrefetchPage } from "../../../../lib/isPrefetchPage";
+import { objectToKVString } from "../../../../lib/objectToKVString";
 import type { CacheStatus } from "../../../../lib/cacheHit";
 import type { Env } from "../interfaces";
 
@@ -120,15 +122,9 @@ const handler: ExportedHandler = {
 							browser: parseCHUA(request.headers.get("sec-ch-ua")) || userAgent,
 							referrer: request.headers.get("referer"),
 							request_id: requestID,
-							details:
-								Object.entries({
-									purpose: request.headers.get("purpose"),
-								})
-									.filter(([, value]) => value !== null)
-									.map((pair: [string, string | null]): string =>
-										pair.join(": "),
-									)
-									.join(", ") || undefined,
+							details: objectToKVString({
+								prefetch: isPrefetchPage(request, originalResponse),
+							}),
 						},
 						env.LOGZIO_TOKEN,
 					),
