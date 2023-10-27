@@ -3,12 +3,13 @@
  */
 export async function readRequestBody(
 	request: Request,
-): Promise<{ [name: string]: string }> {
+): Promise<Record<string, string> | unknown> {
 	const { headers } = request;
 	const contentType = headers.get("content-type") || "";
 
 	if (contentType.includes("application/json")) {
-		return request.json();
+		const data = await request.json();
+		return data ?? {};
 	}
 	if (contentType.includes("form")) {
 		const formData = await request.formData();
@@ -16,7 +17,9 @@ export async function readRequestBody(
 			Object.assign(
 				{},
 				...Array.from(formData.entries()).map(
-					([key, value]: [string, string | File]) => ({ [key]: value }),
+					([key, value]: [string, string | File | FormDataEntryValue]) => ({
+						[key]: value,
+					}),
 				),
 			),
 		);

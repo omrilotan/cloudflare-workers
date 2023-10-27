@@ -49,6 +49,5 @@ jobs:
           LOGZIO_TOKEN: ${{ secrets.LOGZIO_TOKEN }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{  secrets.CLOUDFLARE_ACCOUNT_ID}}
-          TV_HOST: ${{ secrets.TV_HOST }}
-          TV_PORT: ${{ secrets.TV_PORT }}
+          PROXY_HOSTMAP: ${{ vars.PROXY_HOSTMAP }}
         run: npm run deploy --workspaces --if-present

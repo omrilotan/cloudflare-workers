@@ -8,7 +8,7 @@ export async function send(...args: any): Promise<Response | undefined> {
 		return response;
 	}
 
-	const error = new ResponseError(await response.text());
+	const error = new ResponseError(await response.clone().text());
 	error.status = response.status;
 
 	throw error;

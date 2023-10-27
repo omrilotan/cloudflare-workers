@@ -43,7 +43,7 @@ const handler: ExportedHandler = {
 				recipient = to,
 				token = authorization,
 				...rest
-			} = await readRequestBody(request);
+			} = ((await readRequestBody(request)) ?? {}) as Record<string, string>;
 
 			if (token !== env.HANDSHAKE_TOKEN) {
 				return new Response("Ok", {

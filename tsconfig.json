@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom", "DOM.Iterable"],
     "module": "esnext",
     "moduleResolution": "node",
     "types": ["@cloudflare/workers-types", "@types/jest"],
