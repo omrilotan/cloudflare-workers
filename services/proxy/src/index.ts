@@ -12,6 +12,7 @@ const handler: ExportedHandler = {
 		env: Env,
 		ctx: ExecutionContext,
 	): Promise<Response> {
+		const start = Date.now();
 		const url = new URL(request.url);
 		const hostmap = parse(env.PROXY_HOSTMAP) as ProxyHostmap;
 		if (hostmap === null) {
@@ -27,7 +28,13 @@ const handler: ExportedHandler = {
 		url.port = "443";
 		const req = new Request(url.toString(), request);
 		req.headers.set("host", destination);
-		return fetch(url.toString(), req);
+		const originalResponse = await fetch(url.toString(), req);
+		const response = new Response(originalResponse.body, originalResponse);
+		response.headers.set(
+			"server-timing",
+			`proxy; dur=${Date.now() - start}; desc=${destination}`,
+		);
+		return response;
 	},
 };
 

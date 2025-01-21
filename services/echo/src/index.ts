@@ -29,10 +29,11 @@ const handler: ExportedHandler = {
 		ctx.passThroughOnException();
 
 		const content = `<!DOCTYPE html>
-<html>
+<html lang="en-GB">
 	<head>
 		<meta charset="utf-8">
 		<title>Request details</title>
+		<meta name="viewport" content="width=device-width,minimum-scale=1">
 	</head>
 	<body>
 		<h1>Request details</h1>
