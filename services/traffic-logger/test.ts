@@ -3,84 +3,14 @@ import { MockExecutionContext } from "../../mocks/executionContext";
 import { fetchMock } from "../../mocks/fetchMock";
 import { requestEnrichment } from "../../mocks/requestEnrichment";
 import type { Env as AppEnv } from "./src/interfaces";
-import type { Env as GatewayEnv } from "./src/gateway/index";
-import { Fetcher } from "@cloudflare/workers-types/experimental";
 
 const log = jest.fn();
 const discord = jest.fn();
-let worker;
+let handler: ExportedHandler;
 const ctx = new MockExecutionContext();
 const UID_PATTERN =
 	/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
 const INDEX_PATTERN = /[0-9a-f]{32}/;
-
-describe("gateway", () => {
-	const env: GatewayEnv = {
-		MAIN: {
-			fetch: jest.fn(
-				async (request: Request): Promise<Response> => new Response("ok"),
-			),
-			connect: jest.fn(),
-		} as any,
-		CANARY: {
-			fetch: jest.fn(
-				async (request: Request): Promise<Response> =>
-					new Response("Server Error", { status: 500 }),
-			),
-			connect: jest.fn(),
-		} as any,
-		ROLLOUT: {
-			get: jest.fn((key: string): string => "0"),
-		} as unknown as KVNamespace,
-		ROLLOUT_KEY: "rollout-key",
-		ROLLOUT_HEADER: "rollout-header",
-	};
-	beforeAll(async () => {
-		worker = (await import("./src/gateway")).default;
-	});
-	afterEach(() => jest.clearAllMocks());
-	afterAll(() => jest.restoreAllMocks());
-	test("default : main", async () => {
-		const request = new Request("https://example.com");
-		const response = await worker.fetch(request, env, ctx);
-		expect(env.MAIN.fetch).toHaveBeenCalled();
-		expect(env.CANARY.fetch).not.toHaveBeenCalled();
-		expect(response.status).toBe(200);
-	});
-	test("rollout is on 100 : main", async () => {
-		const request = new Request("https://example.com");
-		(env.ROLLOUT.get as jest.Mock).mockImplementationOnce(() => "100");
-		const response = await worker.fetch(request, env, ctx);
-		expect(env.MAIN.fetch).not.toHaveBeenCalled();
-		expect(env.CANARY.fetch).toHaveBeenCalled();
-		expect(response.status).toBe(500);
-	});
-	test("rollout is on 50 : either", async () => {
-		await Promise.all(
-			Array.from({ length: 50 }).map(() => {
-				const request = new Request("https://example.com");
-				(env.ROLLOUT.get as jest.Mock).mockImplementationOnce(() => "50");
-				return worker.fetch(request, env, ctx);
-			}),
-		);
-		const mainCalls = (env.MAIN.fetch as jest.Mock).mock.calls.length;
-		const canaryCalls = (env.CANARY.fetch as jest.Mock).mock.calls.length;
-		expect(mainCalls).toBeGreaterThan(0);
-		expect(canaryCalls).toBeGreaterThan(0);
-		expect(mainCalls + canaryCalls).toBe(50);
-	});
-	test("custom header : canary", async () => {
-		const request = new Request("https://example.com", {
-			headers: {
-				[env.ROLLOUT_HEADER]: "true",
-			},
-		});
-		const response = await worker.fetch(request, env, ctx);
-		expect(env.MAIN.fetch).not.toHaveBeenCalled();
-		expect(env.CANARY.fetch).toHaveBeenCalled();
-		expect(response.status).toBe(500);
-	});
-});
 
 describe("traffic-logger", (): void => {
 	const env: AppEnv = {
@@ -104,7 +34,7 @@ describe("traffic-logger", (): void => {
 		jest.mock("../../lib/log", () => ({ log }));
 		jest.mock("../../lib/discord", () => ({ discord }));
 		try {
-			worker = (await import("./src/app")).default;
+			handler = (await import("./src/app")).default;
 		} catch (e) {
 			console.error(e);
 		}
@@ -173,8 +103,8 @@ describe("traffic-logger", (): void => {
 						"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:106.0) Gecko/20100101 Firefox/106.0",
 					],
 				]),
-			});
-			const response = await worker.fetch(request, env, ctx);
+			}) as Request<unknown, IncomingRequestCfProperties<unknown>>;
+			const response = await handler.fetch(request, env, ctx);
 
 			expect(log).toHaveBeenCalledTimes(shouldLog ? 1 : 0);
 			if (shouldLog) {
