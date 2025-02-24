@@ -6,7 +6,11 @@ export const template = ({ Section }) => ({
 		gateway: Section({
 			name: "traffic-logger-gateway",
 			main: "src/app/index.ts",
-			routes: [],
+			routes: [
+				{ pattern: "omrilotan.com/*", zone_name: "omrilotan.com" },
+				{ pattern: "do.omrilotan.com/*", zone_name: "omrilotan.com" },
+				{ pattern: "*ci-cd.net/*", zone_name: "ci-cd.net" },
+			],
 			analytics_engine_datasets: [
 				{
 					binding: "TRAFFIC_ANALYTICS",
@@ -15,7 +19,6 @@ export const template = ({ Section }) => ({
 			],
 			vars: {
 				SEND_ANALYTICS: true,
-				SEND_LOGS: false,
 			},
 		}),
 	},

@@ -2,14 +2,9 @@ import { isbot } from "isbot";
 import { v4 as uuidv4 } from "uuid";
 import { appName } from "../../../../lib/appName";
 import { discord } from "../../../../lib/discord";
-import { isDataCentreAutonomousSystem } from "../../../../lib/isDataCentreAutonomousSystem";
 import { locationDeails } from "../../../../lib/locationDetails";
-import { log } from "../../../../lib/log";
-import { parseCHUA } from "../../../../lib/parse-ch-ua";
 import { type } from "../../../../lib/type";
 import { cacheHit } from "../../../../lib/cacheHit";
-import { isPrefetchPage } from "../../../../lib/isPrefetchPage";
-import { objectToKVString } from "../../../../lib/objectToKVString";
 import type { CacheStatus } from "../../../../lib/cacheHit";
 import type { Env } from "../interfaces";
 
@@ -100,36 +95,6 @@ const handler: ExportedHandler = {
 			const location = [city, country, continent].filter(Boolean).join(", ");
 			const duration = Date.now() - start;
 
-			env.SEND_LOGS &&
-				ctx.waitUntil(
-					log(
-						"traffic",
-						{
-							level: "info",
-							app,
-							app_version: appVersion,
-							message: `${status} "${url.href}" from ${location}`,
-							duration,
-							request: [request.method, url.href].join(" "),
-							location,
-							ip,
-							as: [asOrg, asn].filter(Boolean).join(", "),
-							automated:
-								isDataCentreAutonomousSystem(asOrg) || isbot(userAgent),
-							status,
-							content_type: contentType,
-							cache_status: cacheStatus,
-							browser: parseCHUA(request.headers.get("sec-ch-ua")) || userAgent,
-							referrer: request.headers.get("referer"),
-							request_id: requestID,
-							details: objectToKVString({
-								prefetch: isPrefetchPage(request, originalResponse),
-							}),
-						},
-						env.LOGZIO_TOKEN,
-					),
-				);
-
 			env.SEND_ANALYTICS &&
 				env.TRAFFIC_ANALYTICS.writeDataPoint({
 					blobs: [
@@ -139,6 +104,8 @@ const handler: ExportedHandler = {
 						url.href,
 						contentType,
 						cacheStatus,
+						location,
+						isbot(userAgent) ? "true" : "false",
 					],
 					doubles: [status, duration],
 					indexes: [requestID.replace(/-/g, "")],
@@ -146,23 +113,7 @@ const handler: ExportedHandler = {
 
 			return mutableResponse;
 		} catch (error) {
-			const { message, stack } = error as Error;
-			ctx.waitUntil(
-				log(
-					"error",
-					{
-						level: "error",
-						app,
-						app_version: appVersion,
-						message: `Error fetching "${request.url}"`,
-						duration: Date.now() - start,
-						request: [request.method, request.url].join(" "),
-						error: message,
-						stack,
-					},
-					env.LOGZIO_TOKEN,
-				),
-			);
+			const { message } = error as Error;
 			ctx.waitUntil(
 				discord(
 					`Error fetching "${request.url}"\n\`\`\`\n${message}\n\`\`\``,

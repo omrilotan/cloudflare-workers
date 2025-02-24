@@ -5,9 +5,9 @@
   "scripts": {
     "start": "wrangler dev src/index.ts",
     "start-local": "wrangler dev src/index.ts --host message.omrilotan.com",
-    "predeploy": "../../scripts/secrets.sh verify DISCORD_WEBHOOK HANDSHAKE_TOKEN LOGZIO_TOKEN SENDGRID_TOKEN VERIFIED_SENDGRID_EMAIL",
+    "predeploy": "../../scripts/secrets.sh verify DISCORD_WEBHOOK HANDSHAKE_TOKEN SENDGRID_TOKEN VERIFIED_SENDGRID_EMAIL",
     "deploy": "wrangler deploy",
-    "postdeploy": "../../scripts/secrets.sh push DISCORD_WEBHOOK HANDSHAKE_TOKEN LOGZIO_TOKEN SENDGRID_TOKEN VERIFIED_SENDGRID_EMAIL",
+    "postdeploy": "../../scripts/secrets.sh push DISCORD_WEBHOOK HANDSHAKE_TOKEN SENDGRID_TOKEN VERIFIED_SENDGRID_EMAIL",
     "tail": "wrangler tail"
   }
 }

@@ -1,3 +1,4 @@
+import isbot from "isbot";
 /**
  * @example
 SELECT
@@ -31,6 +32,8 @@ export interface DataPoint {
 		url: string,
 		content_type: string,
 		cache_status: string,
+		location: string,
+		isbot: string,
 	];
 	doubles: [status: number, duration: number];
 	indexes: [request_id: string];
@@ -42,10 +45,8 @@ export interface AnalyticsEngine {
 
 export interface Env {
 	DISCORD_WEBHOOK: string;
-	LOGZIO_TOKEN: string;
 	RELEASE: string;
 	SEND_ANALYTICS: boolean;
-	SEND_LOGS: boolean;
 	TRAFFIC_ANALYTICS: AnalyticsEngine;
 	VARIATION: string;
 	VERSION: string;

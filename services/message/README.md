@@ -5,7 +5,6 @@ Send email using Sendgrid API
 Required secrets:
 
 - `HANDSHAKE_TOKEN`: A token to be used as authorization for the API
-- `LOGZIO_TOKEN`: A token to be used with logz.io for logging
 - `SENDGRID_TOKEN`: A token to be used with Sendgrid API
 - `VERIFIED_SENDGRID_EMAIL`: [Email verified with SendGrid](https://docs.sendgrid.com/ui/sending-email/sender-verification)
 

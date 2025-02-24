@@ -15,11 +15,9 @@ const INDEX_PATTERN = /[0-9a-f]{32}/;
 describe("traffic-logger", (): void => {
 	const env: AppEnv = {
 		DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1234567890/1234567890",
-		LOGZIO_TOKEN: "xmC8duHhUaqqYoBWbMgGq1g6jxUJwtPG",
 		VERSION: "a3b445d",
 		RELEASE: "2022-10-11",
 		SEND_ANALYTICS: true,
-		SEND_LOGS: true,
 		VARIATION: "test",
 		TRAFFIC_ANALYTICS: {
 			writeDataPoint: jest.fn(),
@@ -105,25 +103,6 @@ describe("traffic-logger", (): void => {
 				]),
 			}) as Request<unknown, IncomingRequestCfProperties<unknown>>;
 			const response = await handler.fetch(request, env, ctx);
-
-			expect(log).toHaveBeenCalledTimes(shouldLog ? 1 : 0);
-			if (shouldLog) {
-				const [[type, record, token]] = log.mock.calls;
-				expect(type).toBe("traffic");
-				expect(token).toBe(env.LOGZIO_TOKEN);
-				expect(record.request_id).toMatch(UID_PATTERN);
-				expect(record.duration).toBeGreaterThan(-1);
-				delete record.request_id;
-				delete record.duration;
-				expect(record).toMatchSnapshot();
-				const [[analytics_record]] = (
-					env.TRAFFIC_ANALYTICS.writeDataPoint as jest.Mock
-				).mock.calls;
-				expect(analytics_record.indexes.pop()).toMatch(INDEX_PATTERN);
-				const duration = analytics_record.doubles.splice(1, 1)[0];
-				expect(duration).toBeGreaterThan(-1);
-				expect(analytics_record).toMatchSnapshot();
-			}
 
 			expect(response.status).toBe(200);
 			expect(response.headers.get("server-timing")).toMatch(
