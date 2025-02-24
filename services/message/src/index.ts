@@ -2,8 +2,6 @@ import { appName } from "../../../lib/appName";
 import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries";
 import { discord } from "../../../lib/discord";
 import { locationDeails } from "../../../lib/locationDetails";
-import { log } from "../../../lib/log";
-import { parseCHUA } from "../../../lib/parse-ch-ua";
 import { envVars } from "./env";
 import type { Env } from "./env";
 import { fromSite } from "./fromSite";
@@ -105,44 +103,18 @@ const handler: ExportedHandler = {
 				}
 				const message =
 					rest.message || rest.subject || `Email sent to ${recipient}`;
+			} catch (error) {
+				console.error(error);
 				ctx.waitUntil(
-					log(
-						"email",
-						{
-							level: "info",
-							app,
-							message,
-							recipient,
-							content,
-							browser:
-								parseCHUA(request.headers.get("sec-ch-ua")) ||
-								request.headers.get("user-agent"),
-							location,
-							ip,
-						},
-						env.LOGZIO_TOKEN,
+					discord(
+						`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
+						env.DISCORD_WEBHOOK,
 					),
 				);
-			} catch (error) {
-				ctx.waitUntil(
-					Promise.all([
-						log(
-							"error",
-							{
-								level: "error",
-								app,
-								message: error.message,
-								stack: error.stack,
-								status: error.status,
-							},
-							env.LOGZIO_TOKEN,
-						),
-						discord(
-							`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
-							env.DISCORD_WEBHOOK,
-						),
-					]),
-				);
+				return new Response("Failed to send", {
+					status: 500,
+					headers: new Headers([versionHeaderEntry]),
+				});
 			}
 
 			return new Response("Sent", {
@@ -151,19 +123,6 @@ const handler: ExportedHandler = {
 			});
 		} catch (error: any) {
 			console.error(error);
-			ctx.waitUntil(
-				log(
-					"error",
-					{
-						level: "error",
-						app,
-						message: error.message,
-						stack: error.stack,
-						status: error.status,
-					},
-					env.SENDGRID_TOKEN,
-				),
-			);
 			ctx.waitUntil(
 				discord(
 					`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,

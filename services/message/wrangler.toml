@@ -1,4 +1,4 @@
 name = "message"
 main = "src/index.ts"
-compatibility_date = "2022-07-22"
+compatibility_date = "2024-11-11"
 routes = ["message.omrilotan.com", "message.omrilotan.com/*"]

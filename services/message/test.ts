@@ -9,7 +9,6 @@ let worker;
 const env: Env = {
 	DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1234567890/1234567890",
 	HANDSHAKE_TOKEN: "OaOkHIXAluv9EF941cQuYUEeWfep4x9b",
-	LOGZIO_TOKEN: "xmC8duHhUaqqYoBWbMgGq1g6jxUJwtPG",
 	SENDGRID_TOKEN: "451ECD88-AA68-401F-906C-D0E29D2A8D33",
 	VERIFIED_SENDGRID_EMAIL: "authorised.with.sendgrid@domain.net",
 	VERSION: "a3b445d",
@@ -114,14 +113,9 @@ describe("services/message", () => {
 			});
 			const response = await worker.fetch(request, env, ctx);
 
-			expect(response.status).toBe(200);
+			expect(response.status).toBe(500);
 
 			await ctx.drain();
-			const [[type, { level, message, stack, status }]] = log.mock.calls;
-			expect(level).toBe("error");
-			expect(message).toBe("Error sending email");
-			expect(typeof stack).toBe("string");
-			expect(status).toBe(500);
 		});
 		test("missing authorization header", async () => {
 			const request = new Request("http://localhost:8080", {

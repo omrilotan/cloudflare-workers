@@ -4,7 +4,7 @@ class ResponseError extends Error {
 
 export async function send(...args: any): Promise<Response | undefined> {
 	const response = await fetch.apply(null, args);
-	if (response.ok) {
+	if (response?.ok) {
 		return response;
 	}
 
