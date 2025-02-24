@@ -21,14 +21,14 @@ describe("gateway", () => {
 				async (request: Request): Promise<Response> => new Response("ok"),
 			),
 			connect: jest.fn(),
-		},
+		} as any,
 		CANARY: {
 			fetch: jest.fn(
 				async (request: Request): Promise<Response> =>
 					new Response("Server Error", { status: 500 }),
 			),
 			connect: jest.fn(),
-		},
+		} as any,
 		ROLLOUT: {
 			get: jest.fn((key: string): string => "0"),
 		} as unknown as KVNamespace,

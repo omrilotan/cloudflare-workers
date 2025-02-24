@@ -23,7 +23,7 @@ export const requestEnrichment = {
 					edgeRequestKeepAliveStatus: 0,
 					hostMetadata: null,
 					httpProtocol: "HTTP/2.0",
-					isEUCountry: null || "1",
+					isEUCountry: "1",
 					latitude: "30.27130",
 					longitude: "-97.74260",
 					metroCode: "635",

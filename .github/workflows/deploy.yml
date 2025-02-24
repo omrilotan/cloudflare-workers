@@ -7,14 +7,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       actions: read
-      contents: read
+      contents: write
     strategy:
       fail-fast: false
       matrix:
         os:
           - 'ubuntu-latest'
         node-version:
-          - '18'
+          - '22'
     steps:
       - uses: actions/checkout@v3
         with:
@@ -29,7 +29,6 @@ jobs:
           USERNAME: ${{ github.actor }}
           BRANCH: ${{ github.ref_name }}
           REPO: ${{ github.repository }}
-          TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           if [ "$(git diff --quiet && echo 0 || echo $?)" -gt 0 ]; then
             git config --global user.email "${USERNAME}@users.noreply.github.com" --replace-all

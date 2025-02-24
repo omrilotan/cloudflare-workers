@@ -5,20 +5,20 @@ class CacheMock implements Cache {
 	private static map = new Map<string, Response>();
 
 	// add, addAll, keys, matchAll
-	async add(request: RequestInit | URL): Promise<void> {
-		throw new Error("Method not implemented by Cloudflare.");
+	async add(URL): Promise<void> {
+		throw new Error("Method not implemented.");
 	}
-	async addAll(requests: RequestInit[]): Promise<void> {
-		throw new Error("Method not implemented by Cloudflare.");
+	async addAll(requestInfo: RequestInfo[]): Promise<void> {
+		throw new Error("Method not implemented.");
 	}
 	async keys(): Promise<Request[]> {
-		throw new Error("Method not implemented by Cloudflare.");
+		throw new Error("Method not implemented.");
 	}
 	async matchAll(
-		request: RequestInit,
+		requestInfo: RequestInfo,
 		options?: CacheQueryOptions,
 	): Promise<Response[]> {
-		throw new Error("Method not implemented by Cloudflare.");
+		throw new Error("Method not implemented.");
 	}
 	async match(
 		request: Request,
@@ -57,6 +57,21 @@ export class CacheStorageMock implements CacheStorage {
 		jest.spyOn(cache, "put");
 
 		return Promise.resolve(cache);
+	}
+	delete(): Promise<boolean> {
+		throw new Error("Method not implemented.");
+	}
+	has(): Promise<boolean> {
+		throw new Error("Method not implemented.");
+	}
+	keys(): Promise<string[]> {
+		throw new Error("Method not implemented.");
+	}
+	match(
+		request: RequestInfo | URL,
+		options?: MultiCacheQueryOptions,
+	): Promise<Response | undefined> {
+		throw new Error("Method not implemented.");
 	}
 }
 

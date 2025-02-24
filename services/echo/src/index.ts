@@ -13,7 +13,7 @@ function displayEntries(entries: [string, any][], indentation = 1): string {
 						typeof value === "object"
 							? `\n${displayEntries(Object.entries(value), indentation + 1)}`
 							: `${value}`
-				  }`
+					}`
 				: "",
 		)
 		.filter(Boolean)

@@ -1,5 +1,6 @@
 export class MockExecutionContext implements ExecutionContext {
 	#promises: Promise<any>[] = [];
+	props: Record<string, any> = {};
 	waitUntil(promise) {
 		this.#promises.push(promise);
 	}

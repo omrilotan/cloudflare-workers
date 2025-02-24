@@ -28,7 +28,7 @@ async function inRollout(request: Request, env: Env): Promise<boolean> {
 	if (request.headers.get(env.ROLLOUT_HEADER) === "true") {
 		return true;
 	}
-	const valueFromKV = await env.ROLLOUT.get(env.ROLLOUT_KEY);
+	const valueFromKV = await env.ROLLOUT?.get(env.ROLLOUT_KEY);
 	const rollout = Number(valueFromKV) || 0;
 	const percent = Math.random() * 100;
 	return rollout > percent;

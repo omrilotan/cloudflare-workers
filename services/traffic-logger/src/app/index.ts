@@ -1,4 +1,4 @@
-import isbot from "isbot";
+import { isbot } from "isbot";
 import { v4 as uuidv4 } from "uuid";
 import { appName } from "../../../../lib/appName";
 import { discord } from "../../../../lib/discord";

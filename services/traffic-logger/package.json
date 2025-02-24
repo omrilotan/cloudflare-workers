@@ -13,7 +13,7 @@
     "rollout": "wrangler kv:key put --namespace-id 309b38e6127b48eb86ff9a58e715ac15 \"traffic-logger-canary\""
   },
   "dependencies": {
-    "isbot": "^3.5.4",
-    "uuid": "^9.0.0"
+    "isbot": "^5.1.23",
+    "uuid": "^11.1.0"
   }
 }
