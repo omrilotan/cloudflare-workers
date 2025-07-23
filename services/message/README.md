@@ -1,12 +1,12 @@
 # message
 
-Send email using Sendgrid API
+Send email using HTTP API
 
 Required secrets:
 
 - `HANDSHAKE_TOKEN`: A token to be used as authorization for the API
-- `SENDGRID_TOKEN`: A token to be used with Sendgrid API
-- `VERIFIED_SENDGRID_EMAIL`: [Email verified with SendGrid](https://docs.sendgrid.com/ui/sending-email/sender-verification)
+- `MAILEROO_API_KEY`: A token to be used with email API
+- `SENDER_EMAIL`: Verified email
 
 Usage example:
 

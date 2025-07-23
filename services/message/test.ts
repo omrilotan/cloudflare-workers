@@ -6,11 +6,31 @@ import type { Env } from "./src/env";
 const log = jest.fn();
 let worker;
 
+const objectifyFormdata = (data) => {
+	return data
+		.getBuffer()
+		.toString()
+		.split(data.getBoundary())
+		.filter((e) => e.includes("form-data"))
+		.map((e) =>
+			e
+				.replace(/[\-]+$/g, "")
+				.replace(/^[\-]+/g, "")
+				.match(/\; name\=\"([^\"]+)\"(.*)/s)
+				.filter((v, i) => i == 1 || i == 2)
+				.map((e) => e.trim()),
+		)
+		.reduce((acc, cur) => {
+			acc[cur[0]] = cur[1];
+			return acc;
+		}, {});
+};
+
 const env: Env = {
 	DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1234567890/1234567890",
 	HANDSHAKE_TOKEN: "OaOkHIXAluv9EF941cQuYUEeWfep4x9b",
-	SENDGRID_TOKEN: "451ECD88-AA68-401F-906C-D0E29D2A8D33",
-	VERIFIED_SENDGRID_EMAIL: "authorised.with.sendgrid@domain.net",
+	MAILEROO_API_KEY: "451ECD88-AA68-401F-906C-D0E29D2A8D33",
+	SENDER_EMAIL: "sender@domain.net",
 	VERSION: "a3b445d",
 };
 const ctx = new MockExecutionContext();
@@ -24,7 +44,8 @@ describe("services/message", () => {
 		requestEnrichment.mount();
 		await fetchMock.mount();
 		(globalThis.fetch as jest.Mock).mockImplementation(
-			async () => new Response("Ok", { status: 200 }),
+			async () =>
+				new Response('{"success":true,"message":"okay"}', { status: 200 }),
 		);
 		jest.mock("../../lib/log", () => ({ log }));
 		worker = (await import("./src")).default;
@@ -52,17 +73,13 @@ describe("services/message", () => {
 			const response = await worker.fetch(request, env, ctx);
 
 			const [[url, options]] = (globalThis.fetch as jest.Mock).mock.calls;
-			expect(url).toBe("https://api.sendgrid.com/v3/mail/send");
+			expect(url).toBe("https://smtp.maileroo.com/send");
 
-			const payload = JSON.parse(options.body);
-			expect(payload.personalizations[0].to[0].email).toBe(
-				"username@domain.com",
-			);
-			expect(payload.from.email).toBe("authorised.with.sendgrid@domain.net");
+			const payload = objectifyFormdata(options.body);
+			expect(payload.to).toBe("username@domain.com");
+			expect(payload.from).toBe("sender@domain.net");
 			expect(payload.subject).toBe("Received email from www.website.com");
-			expect(payload.content[0].value).toMatch(
-				/^from: Shmuel\ncontact: 07873670381/,
-			);
+			expect(payload.plain).toMatch(/^from: Shmuel\ncontact: 07873670381/);
 
 			expect(response.status).toBe(200);
 		});
@@ -84,21 +101,17 @@ describe("services/message", () => {
 			await worker.fetch(request, env, ctx);
 
 			const [[url, options]] = (globalThis.fetch as jest.Mock).mock.calls;
-			expect(url).toBe("https://api.sendgrid.com/v3/mail/send");
+			expect(url).toBe("https://smtp.maileroo.com/send");
 
-			const payload = JSON.parse(options.body);
-			expect(payload.personalizations[0].to[0].email).toBe(
-				"username@domain.com",
-			);
-			expect(payload.from.email).toBe("authorised.with.sendgrid@domain.net");
+			const payload = objectifyFormdata(options.body);
+			expect(payload.to).toBe("username@domain.com");
+			expect(payload.from).toBe("sender@domain.net");
 			expect(payload.subject).toBe("Received email");
-			expect(payload.content[0].value).toMatch(
-				/^from: Shmuel\ncontact: 07873670381/,
-			);
+			expect(payload.plain).toMatch(/^from: Shmuel\ncontact: 07873670381/);
 		});
 	});
 	describe("errors", () => {
-		test("Got an error from SendGrid", async () => {
+		test("Got an error from email provider", async () => {
 			(globalThis.fetch as jest.Mock).mockImplementationOnce(
 				async (request) => new Response("Error sending email", { status: 500 }),
 			);

@@ -1,3 +1,4 @@
+import FormData from "form-data";
 import { appName } from "../../../lib/appName";
 import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries";
 import { discord } from "../../../lib/discord";
@@ -70,39 +71,26 @@ const handler: ExportedHandler = {
 				.join("\n");
 
 			try {
-				const response = await send("https://api.sendgrid.com/v3/mail/send", {
-					method: "POST",
-					headers: new Headers([
-						["Authorization", `Bearer ${env.SENDGRID_TOKEN}`],
-						["Content-Type", "application/json"],
-					]),
-					body: JSON.stringify({
-						personalizations: [
-							{
-								to: [
-									{
-										email: recipient,
-									},
-								],
-							},
-						],
-						from: { email: env.VERIFIED_SENDGRID_EMAIL },
-						subject:
-							rest.subject ||
+				const formData = new FormData();
+				[
+					["from", env.SENDER_EMAIL],
+					["to", recipient],
+					[
+						"subject",
+						rest.subject ||
 							["Received email", fromSite(request)].filter(Boolean).join(" "),
-						content: [
-							{
-								type: "text/plain",
-								value: content,
-							},
-						],
-					}),
+					],
+					["plain", content],
+				].forEach(([key, value]) => formData.append(key, value));
+				const message = await send("https://smtp.maileroo.com/send", {
+					method: "POST",
+					headers: new Headers([["X-API-Key", env.MAILEROO_API_KEY]]),
+					body: formData,
 				});
-				if (!response.ok) {
-					throw new Error(`Sendgrid responded with ${response.status}`);
-				}
-				const message =
-					rest.message || rest.subject || `Email sent to ${recipient}`;
+				return new Response(message, {
+					status: 200,
+					headers: new Headers([...CORSHeaderEntries, versionHeaderEntry]),
+				});
 			} catch (error) {
 				console.error(error);
 				ctx.waitUntil(
@@ -116,11 +104,6 @@ const handler: ExportedHandler = {
 					headers: new Headers([versionHeaderEntry]),
 				});
 			}
-
-			return new Response("Sent", {
-				status: 200,
-				headers: new Headers([...CORSHeaderEntries, versionHeaderEntry]),
-			});
 		} catch (error: any) {
 			console.error(error);
 			ctx.waitUntil(

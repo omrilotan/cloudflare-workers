@@ -5,3 +5,4 @@ dist
 yarn.lock
 
 services/traffic-logger/wrangler.toml
+.dev.vars
