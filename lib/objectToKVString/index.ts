@@ -3,7 +3,9 @@ const DROPPED_VALUES = [undefined, null, ""];
 /**
  * Represents an object as a string of key-value pairs.
  */
-export function objectToKVString(input: Record<string, any>): string {
+export function objectToKVString(
+	input: Record<string, any>,
+): string | undefined {
 	return (
 		Object.entries(input)
 			.filter(([, value]) => !DROPPED_VALUES.includes(value))

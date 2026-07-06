@@ -1,4 +1,3 @@
-import isbot from "isbot";
 /**
  * @example
 SELECT

@@ -1,15 +1,15 @@
 import FormData from "form-data";
-import { appName } from "../../../lib/appName";
-import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries";
-import { discord } from "../../../lib/discord";
-import { locationDeails } from "../../../lib/locationDetails";
-import { envVars } from "./env";
-import type { Env } from "./env";
-import { fromSite } from "./fromSite";
-import { readRequestBody } from "./readRequestBody";
-import { send } from "./send";
+import { appName } from "../../../lib/appName/index.ts";
+import { CORSHeaderEntries } from "../../../lib/CORSHeaderEntries/index.ts";
+import { discord } from "../../../lib/discord/index.ts";
+import { locationDeails } from "../../../lib/locationDetails/index.ts";
+import { envVars } from "./env/index.ts";
+import type { Env } from "./env/index.ts";
+import { fromSite } from "./fromSite/index.ts";
+import { readRequestBody } from "./readRequestBody/index.ts";
+import { send } from "./send/index.ts";
 
-const handler: ExportedHandler = {
+const handler: ExportedHandler<Env> = {
 	async fetch(
 		request: Request,
 		env: Env,
@@ -50,7 +50,7 @@ const handler: ExportedHandler = {
 					headers: new Headers([
 						...CORSHeaderEntries,
 						versionHeaderEntry,
-						["WWW-Authenticate", 'Basic realm="Include Brarer Token"'],
+						["WWW-Authenticate", 'Basic realm="Include Bearer Token"'],
 					]),
 				});
 			}
@@ -91,11 +91,11 @@ const handler: ExportedHandler = {
 					status: 200,
 					headers: new Headers([...CORSHeaderEntries, versionHeaderEntry]),
 				});
-			} catch (error) {
+			} catch (error: any) {
 				console.error(error);
 				ctx.waitUntil(
 					discord(
-						`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
+						`Error handling "${url}"\n\`\`\`\n${error?.message}\n\`\`\``,
 						env.DISCORD_WEBHOOK,
 					),
 				);
@@ -108,7 +108,7 @@ const handler: ExportedHandler = {
 			console.error(error);
 			ctx.waitUntil(
 				discord(
-					`Error handling "${url}"\n\`\`\`\n${error.message}\n\`\`\``,
+					`Error handling "${url}"\n\`\`\`\n${error?.message}\n\`\`\``,
 					env.DISCORD_WEBHOOK,
 				),
 			);

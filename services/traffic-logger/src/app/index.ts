@@ -1,21 +1,22 @@
 import { isbot } from "isbot";
 import { v4 as uuidv4 } from "uuid";
-import { appName } from "../../../../lib/appName";
-import { discord } from "../../../../lib/discord";
-import { locationDeails } from "../../../../lib/locationDetails";
-import { type } from "../../../../lib/type";
-import { cacheHit } from "../../../../lib/cacheHit";
-import type { CacheStatus } from "../../../../lib/cacheHit";
-import type { Env } from "../interfaces";
+import { appName } from "../../../../lib/appName/index.ts";
+import { discord } from "../../../../lib/discord/index.ts";
+import { locationDeails } from "../../../../lib/locationDetails/index.ts";
+import { type } from "../../../../lib/type/index.ts";
+import { cacheHit } from "../../../../lib/cacheHit/index.ts";
+import type { CacheStatus } from "../../../../lib/cacheHit/index.ts";
+import type { Env } from "../interfaces/index.ts";
 
-const handler: ExportedHandler = {
+const handler: ExportedHandler<Env> &
+	Required<Pick<ExportedHandler<Env>, "fetch">> = {
 	async fetch(
 		request: Request,
 		env: Env,
 		ctx: ExecutionContext,
 	): Promise<Response> {
 		ctx.passThroughOnException();
-		const start = Date.now();
+		const start = performance.now();
 		const url = new URL(request.url);
 		const app = appName(url);
 		const appVersion = [env.VARIATION, env.RELEASE, env.VERSION].join("-");
@@ -70,7 +71,7 @@ const handler: ExportedHandler = {
 				["App-Version", appVersion],
 				[
 					"Server-Timing",
-					`CDN-Origin-Fetch; dur=${Date.now() - start}; desc="${env.RELEASE}:${
+					`CDN-Origin-Fetch; dur=${performance.now() - start}; desc="${env.RELEASE}:${
 						env.VERSION
 					}"`,
 				],
@@ -93,7 +94,7 @@ const handler: ExportedHandler = {
 			}
 			const { status } = originalResponse;
 			const location = [city, country, continent].filter(Boolean).join(", ");
-			const duration = Date.now() - start;
+			const duration = performance.now() - start;
 
 			env.SEND_ANALYTICS &&
 				env.TRAFFIC_ANALYTICS.writeDataPoint({

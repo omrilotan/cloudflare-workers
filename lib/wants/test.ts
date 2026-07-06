@@ -1,7 +1,7 @@
-import { wants } from ".";
+import { Wants, wants } from ".";
 
 describe("lib/wants", () => {
-	test.each([
+	const cases: [keyof Wants, string][] = [
 		["any", "*/*"],
 		["css", "text/css,*/*;q=0.1"],
 		[
@@ -15,7 +15,8 @@ describe("lib/wants", () => {
 			"image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
 		],
 		["image", "image/avif,image/webp,*/*"],
-	])("%s request", (method, accept) => {
+	];
+	test.each(cases)("%s request", (method, accept) => {
 		const request = new Request("https://website.net", {
 			headers: new Headers([["accept", accept]]),
 		});

@@ -33,7 +33,8 @@ export const requestEnrichment = {
 					requestPriority: "weight=192;exclusive=0;group=3;group-weight=127",
 					timezone: "America/Chicago",
 					tlsCipher: "AEAD-AES128-GCM-SHA256",
-					tlsClientAuth: null,
+					tlsClientAuth:
+						{} as IncomingRequestCfPropertiesTLSClientAuthPlaceholder,
 					tlsVersion: "TLSv1.3",
 				};
 			},

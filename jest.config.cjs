@@ -2,4 +2,5 @@
 module.exports = {
 	preset: "ts-jest",
 	testEnvironment: "miniflare",
+	setupFilesAfterEnv: ["./jest.setup.cjs"],
 };

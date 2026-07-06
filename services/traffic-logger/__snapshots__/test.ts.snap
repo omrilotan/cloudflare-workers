@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`traffic-logger does not log traffic for https://httpbin.org/script.239874.js 1`] = `
 [

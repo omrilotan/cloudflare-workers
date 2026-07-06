@@ -4,32 +4,32 @@ import { requestEnrichment } from "../../mocks/requestEnrichment";
 import type { Env } from "./src/env";
 
 const log = jest.fn();
-let worker;
+let worker: any;
 
-const objectifyFormdata = (data) => {
+const objectifyFormdata = (data: any) => {
 	return data
 		.getBuffer()
 		.toString()
 		.split(data.getBoundary())
-		.filter((e) => e.includes("form-data"))
-		.map((e) =>
+		.filter((e: string) => e.includes("form-data"))
+		.map((e: string) =>
 			e
 				.replace(/[\-]+$/g, "")
 				.replace(/^[\-]+/g, "")
 				.match(/\; name\=\"([^\"]+)\"(.*)/s)
-				.filter((v, i) => i == 1 || i == 2)
-				.map((e) => e.trim()),
+				?.filter((v, i) => i == 1 || i == 2)
+				.map((e: string) => e.trim()),
 		)
-		.reduce((acc, cur) => {
+		.reduce((acc: Record<string, string>, cur: string[]) => {
 			acc[cur[0]] = cur[1];
 			return acc;
 		}, {});
 };
 
 const env: Env = {
-	DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1234567890/1234567890",
-	HANDSHAKE_TOKEN: "OaOkHIXAluv9EF941cQuYUEeWfep4x9b",
-	MAILEROO_API_KEY: "451ECD88-AA68-401F-906C-D0E29D2A8D33",
+	DISCORD_WEBHOOK: "https://discord.com/api/webhooks/test/test",
+	HANDSHAKE_TOKEN: "test-handshake-token",
+	MAILEROO_API_KEY: "test-maileroo-api-key",
 	SENDER_EMAIL: "sender@domain.net",
 	VERSION: "a3b445d",
 };
@@ -48,7 +48,7 @@ describe("services/message", () => {
 				new Response('{"success":true,"message":"okay"}', { status: 200 }),
 		);
 		jest.mock("../../lib/log", () => ({ log }));
-		worker = (await import("./src")).default;
+		worker = (await import("./src/index.ts")).default;
 	});
 	afterEach(async () => {
 		await fetchMock.drain();

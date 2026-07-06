@@ -1,10 +1,14 @@
 /**
  * Get the type from Content-Type header
  */
-export function type(header: string): string {
+export function type(header: ReturnType<typeof Headers.prototype.get>): string {
+	if (typeof header !== "string") return "unknown";
 	try {
-		const contentType = header.split(";")[0].trim().toLowerCase();
-		const [type, subtype] = contentType.split("/");
+		const [type, subtype] = header
+			.split(";")[0]
+			.trim()
+			.toLowerCase()
+			.split("/");
 		if (["image", "font", "video"].includes(type)) {
 			return type;
 		}

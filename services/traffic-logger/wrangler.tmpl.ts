@@ -1,9 +1,11 @@
-export const template = ({ Section }) => ({
+export const template = ({ Section }: { Section: any }) => ({
 	name: "traffic-logger-local",
 	main: "src/app/index.ts",
-	compatibility_date: "2024-11-11",
+	compatibility_date: "2026-07-06",
+	compatibility_flags: ["nodejs_compat"],
+	workers_dev: false,
 	env: {
-		gateway: Section({
+		main: Section({
 			name: "traffic-logger-gateway",
 			main: "src/app/index.ts",
 			routes: [

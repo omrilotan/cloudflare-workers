@@ -6,7 +6,7 @@ export interface Env {
 	VERSION: string;
 }
 
-export const envVars: string[] = [
+export const envVars: (keyof Env)[] = [
 	"DISCORD_WEBHOOK",
 	"HANDSHAKE_TOKEN",
 	"MAILEROO_API_KEY",

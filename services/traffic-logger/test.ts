@@ -6,7 +6,7 @@ import type { Env as AppEnv } from "./src/interfaces";
 
 const log = jest.fn();
 const discord = jest.fn();
-let handler: ExportedHandler;
+let handler: any;
 const ctx = new MockExecutionContext();
 const UID_PATTERN =
 	/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
@@ -47,7 +47,7 @@ describe("traffic-logger", (): void => {
 		jest.restoreAllMocks();
 	});
 
-	test.each([
+	const cases = [
 		[
 			"logs traffic for",
 			"https://httpbin.org/index.html",
@@ -62,14 +62,16 @@ describe("traffic-logger", (): void => {
 			"application/javascript",
 			false,
 		],
-	])(
+	] as const;
+
+	test.each(cases)(
 		"%s %s",
 		async (
-			description: string,
+			_description: string,
 			url: string,
 			cacheStatus: CacheStatus,
 			contentType: string,
-			shouldLog: boolean,
+			_shouldLog: boolean,
 		): Promise<void> => {
 			(globalThis.fetch as jest.Mock).mockImplementationOnce(
 				async () =>

@@ -18,5 +18,7 @@ describe("lib/type", () => {
 		["video/mp4", "video"],
 		["application/xml;foo=bar", "xml"],
 		["application/opensearchdescription+xml", "xml"],
+		[null, "unknown"],
+		["", "unknown"],
 	])("%s is %s", (header, expected) => expect(type(header)).toBe(expected));
 });

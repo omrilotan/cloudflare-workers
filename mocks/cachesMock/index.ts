@@ -5,7 +5,7 @@ class CacheMock implements Cache {
 	private static map = new Map<string, Response>();
 
 	// add, addAll, keys, matchAll
-	async add(URL): Promise<void> {
+	async add(URL: URL): Promise<void> {
 		throw new Error("Method not implemented.");
 	}
 	async addAll(requestInfo: RequestInfo[]): Promise<void> {
@@ -23,7 +23,7 @@ class CacheMock implements Cache {
 	async match(
 		request: Request,
 		options?: CacheQueryOptions,
-	): Promise<Response> {
+	): Promise<Response | undefined> {
 		if (CacheMock.map.has(request.url)) {
 			return CacheMock.map.get(request.url);
 		}
@@ -44,8 +44,7 @@ class CacheMock implements Cache {
 	}
 }
 
-export class CacheStorageMock implements CacheStorage {
-	readonly default: Cache;
+export class CacheStorageMock implements Omit<CacheStorage, "default"> {
 	open(cacheName: string): Promise<CacheMock> {
 		let cache = memory.get(cacheName);
 		if (cache === undefined) {

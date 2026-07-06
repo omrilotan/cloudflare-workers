@@ -3,9 +3,10 @@
     "target": "esnext",
     "lib": ["esnext", "dom", "DOM.Iterable"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "types": ["@cloudflare/workers-types", "@types/jest"],
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "noEmit": true,
     "resolveJsonModule": true

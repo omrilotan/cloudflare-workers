@@ -13,7 +13,7 @@ describe("parse", () => {
 	});
 	test("return parsed JSON object with reviver applied when valid JSON string is provided and reviver is provided", () => {
 		const json = '{"name": "John", "age": 30}';
-		const reviver = (key, value) => {
+		const reviver = (key: string, value: any) => {
 			if (key === "age") {
 				return value + 10;
 			}
@@ -29,12 +29,12 @@ describe("parse", () => {
 	});
 	test("return undefined when null is provided", () => {
 		const json = null;
-		const result = parse(json);
+		const result = parse(json as any);
 		expect(result).toBe(null);
 	});
 	test("return undefined when undefined is provided", () => {
 		const json = undefined;
-		const result = parse(json);
+		const result = parse(json as any);
 		expect(result).toBeUndefined();
 	});
 });

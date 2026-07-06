@@ -1,4 +1,4 @@
-import { CacheStorageMock } from "../cachesMock";
+import { CacheStorageMock } from "../cachesMock/index.ts";
 const { fetch } = globalThis;
 
 /**
@@ -26,17 +26,24 @@ export const fetchMock = {
 			async function (): Promise<Response> {
 				let response;
 
+				arguments as unknown as Parameters<typeof fetch>;
 				const [request, init] = arguments;
 				const cf: RequestInitCfProperties = init?.cf || {};
+				if (!(request instanceof Request))
+					throw new Error("Request must be an instance of Request");
 
-				const cached = await fetchMock.makePromise(cache.match(request));
+				const cached = await fetchMock.makePromise(
+					cache.match(request) as Promise<any>,
+				);
 				if (cached) {
 					response = cached;
 				} else {
-					response = await fetchMock.makePromise(fetch.apply(this, arguments));
+					response = await fetchMock.makePromise(
+						fetch.apply(this, arguments as unknown as [Request, RequestInit]),
+					);
 					fetchMock.fetchCount++;
 				}
-				if (cf.cacheTtl > 0 && response.ok && response.status !== 206) {
+				if (cf.cacheTtl! > 0 && response.ok && response.status !== 206) {
 					await cache.put(request, response);
 				}
 				return response;

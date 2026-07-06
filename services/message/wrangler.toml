@@ -1,4 +1,5 @@
 name = "message"
 main = "src/index.ts"
-compatibility_date = "2024-11-11"
+compatibility_date = "2026-07-06"
+compatibility_flags = [ "nodejs_compat" ]
 routes = ["message.omrilotan.com", "message.omrilotan.com/*"]
